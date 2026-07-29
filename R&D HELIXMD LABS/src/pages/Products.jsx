@@ -27,21 +27,21 @@ const VIALS = [
   { name: "MT2", spec: "10 mg", prices: [23.5, 22.5, 22.0, 20.0] },
   { name: "NAD+", spec: "500 mg", prices: [40.5, 39.0, 37.0, 34.0] },
   { name: "NAD+", spec: "1000 mg", prices: [53.5, 51.5, 49.5, 45.0] },
-  { name: "Retatrutide", spec: "10 mg", prices: [52.5, 50.5, 48.0, 44.0], img: "/r10.avif" },
-  { name: "Retatrutide", spec: "20 mg", prices: [63.0, 60.5, 58.0, 53.0], img: "/r20.avif" },
-  { name: "Retatrutide", spec: "30 mg", prices: [79.0, 75.5, 72.5, 66.0], img: "/r30.avif" },
-  { name: "Selank", spec: "10 mg", prices: [41.5, 40.0, 38.5, 35.0], img: "/sel10.avif" },
-  { name: "Semax", spec: "10 mg", prices: [41.5, 40.0, 38.5, 35.0], img: "/sem10.avif" },
-  { name: "Semaglutide", spec: "10 mg", prices: [29.5, 28.5, 27.5, 25.0], img: "/s10.avif" },
-  { name: "Semaglutide", spec: "20 mg", prices: [35.5, 34.0, 33.0, 30.0], img: "/s20.avif" },
+  { name: "Retatrutide", spec: "10 mg", prices: [52.5, 50.5, 48.0, 44.0] },
+  { name: "Retatrutide", spec: "20 mg", prices: [63.0, 60.5, 58.0, 53.0] },
+  { name: "Retatrutide", spec: "30 mg", prices: [79.0, 75.5, 72.5, 66.0] },
+  { name: "Selank", spec: "10 mg", prices: [41.5, 40.0, 38.5, 35.0] },
+  { name: "Semax", spec: "10 mg", prices: [41.5, 40.0, 38.5, 35.0] },
+  { name: "Semaglutide", spec: "10 mg", prices: [29.5, 28.5, 27.5, 25.0] },
+  { name: "Semaglutide", spec: "20 mg", prices: [35.5, 34.0, 33.0, 30.0] },
   { name: "Semaglutide", spec: "30 mg", prices: [55.0, 52.5, 50.5, 46.0] },
-  { name: "TB-500", spec: "5 mg", prices: [33.0, 32.0, 30.5, 28.0], img: "/t5.avif" },
-  { name: "TB-500", spec: "10 mg", prices: [46.5, 44.5, 42.5, 39.0], img: "/t10.avif" },
-  { name: "Thymosin Alpha-1", spec: "5 mg", prices: [34.5, 33.0, 31.5, 29.0], img: "/ts5.avif" },
-  { name: "Tirzepatide", spec: "10 mg", prices: [34.5, 33.0, 31.5, 29.0], img: "/tz10.avif" },
-  { name: "Tirzepatide", spec: "20 mg", prices: [41.5, 40.0, 38.5, 35.0], img: "/tz20.avif" },
-  { name: "Tirzepatide", spec: "30 mg", prices: [64.5, 62.0, 59.0, 54.0], img: "/tz30.avif" },
-  { name: "Wolverine", spec: "10/10", prices: [53.5, 51.5, 49.5, 45.0], img: "/w10.avif" },
+  { name: "TB-500", spec: "5 mg", prices: [33.0, 32.0, 30.5, 28.0] },
+  { name: "TB-500", spec: "10 mg", prices: [46.5, 44.5, 42.5, 39.0] },
+  { name: "Thymosin Alpha-1", spec: "5 mg", prices: [34.5, 33.0, 31.5, 29.0] },
+  { name: "Tirzepatide", spec: "10 mg", prices: [34.5, 33.0, 31.5, 29.0] },
+  { name: "Tirzepatide", spec: "20 mg", prices: [41.5, 40.0, 38.5, 35.0] },
+  { name: "Tirzepatide", spec: "30 mg", prices: [64.5, 62.0, 59.0, 54.0] },
+  { name: "Wolverine", spec: "10/10", prices: [53.5, 51.5, 49.5, 45.0] },
 ];
 
 const PENS = [
@@ -176,24 +176,15 @@ export default function Products() {
                 transition={{ duration: 0.4, delay: (i % 3) * 0.07, ease: "easeOut" }}
                 className="group overflow-hidden rounded-2xl border border-line bg-white shadow-sm shadow-navy/5 transition-colors hover:border-brand-cyan/45"
               >
-                {/* product photo — the render fills the frame; products without
-                    their own render fall back to the same empty studio backdrop
-                    so the grid stays consistent */}
-                <div className="relative aspect-16/10 overflow-hidden bg-ice-200">
+                {/* product photo — the vial is a transparent cutout, so it is
+                    contained on the studio wash rather than cropped to fill */}
+                <div className="relative aspect-16/10 overflow-hidden bg-linear-to-br from-white via-ice-100 to-ice-200">
                   <img
-                    src={p.img || "/vial-bg.avif"}
-                    alt={p.img ? `${p.name} ${p.spec} ${unit}` : ""}
+                    src="/vial.avif"
+                    alt={`${p.name} ${p.spec} ${unit}`}
                     draggable="false"
-                    className="h-full w-full object-cover select-none transition-transform duration-500 group-hover:scale-105"
+                    className="h-full w-full object-contain p-4 select-none transition-transform duration-500 group-hover:scale-105"
                   />
-                  {!p.img && (
-                    <img
-                      src="/helixmd-logo.png"
-                      alt=""
-                      draggable="false"
-                      className="pointer-events-none absolute inset-0 m-auto h-5 w-auto opacity-25 select-none"
-                    />
-                  )}
                 </div>
 
                 {/* info */}

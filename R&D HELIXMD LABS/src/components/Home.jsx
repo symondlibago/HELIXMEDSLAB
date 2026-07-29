@@ -39,8 +39,8 @@ const FEATURES = [
 ];
 
 const PRODUCTS = [
-  { name: "Retatrutide", price: "52.50", spec: "10 mg · lyophilized · COA included", img: "/r10.avif" },
-  { name: "Semaglutide", price: "29.50", spec: "10 mg · lyophilized · COA included", img: "/s10.avif" },
+  { name: "Retatrutide", price: "52.50", spec: "10 mg · lyophilized · COA included" },
+  { name: "Semaglutide", price: "29.50", spec: "10 mg · lyophilized · COA included" },
   { name: "MOTS-C", price: "40.50", spec: "10 mg · lyophilized · COA included" },
 ];
 
@@ -118,20 +118,13 @@ export default function Home() {
         id="top"
         className="relative flex items-start md:items-center overflow-hidden min-h-[78vh] md:min-h-[90vh]"
       >
-        {/* mobile.avif takes over below 768px, hero-sec.avif above */}
-        <picture>
-          <source media="(max-width: 767px)" srcSet="/mobile.avif" />
-          <img
-            src="/hero-sec.avif"
-            alt="HelixMD Labs research-grade peptide vial"
-            className="absolute inset-0 h-full w-full object-cover object-center"
-          />
-        </picture>
-
-        {/* navy wash — brand ink rather than flat black — keeps the copy legible:
-            top-down on mobile where the text sits above the vial, left-to-right
-            on desktop where it sits beside it */}
-        <div className="absolute inset-0 bg-linear-to-b from-navy-900/85 via-navy-900/45 to-navy-900/30 md:bg-linear-to-r md:from-navy-900/90 md:via-navy-900/50 md:to-transparent" />
+        {/* the render is a bright, icy scene — on narrow screens the crop is
+            biased right so the vial stays in frame beside the copy */}
+        <img
+          src="/hero.avif"
+          alt="HelixMD Labs research-grade peptide vial"
+          className="absolute inset-0 h-full w-full object-cover object-[68%_50%] md:object-center"
+        />
 
         <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-10 pt-24 pb-16 md:py-36">
           <motion.div
@@ -140,13 +133,11 @@ export default function Home() {
             variants={reveal}
             className="max-w-xl"
           >
-            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-brand-cyan">
-              Premium Quality
-            </p>
-            <h1 className="mt-4 md:mt-5 text-4xl md:text-7xl font-bold leading-[0.95] tracking-tight text-white">
+            <Eyebrow>Premium Quality</Eyebrow>
+            <h1 className="mt-4 md:mt-5 text-4xl md:text-7xl font-bold leading-[0.95] tracking-tight text-navy">
               RESEARCH GRADE PEPTIDES
             </h1>
-            <p className="mt-5 md:mt-6 max-w-60 md:max-w-md text-sm md:text-base leading-relaxed text-white/85">
+            <p className="mt-5 md:mt-6 max-w-60 md:max-w-md text-sm md:text-base leading-relaxed text-body">
               Precision-made peptides designed to support research with dependable
               quality and consistency.
             </p>
@@ -154,13 +145,13 @@ export default function Home() {
             <div className="mt-7 md:mt-9 flex flex-col items-start gap-3 sm:flex-row sm:gap-4">
               <a
                 href="#catalog"
-                className="rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-navy hover:bg-ice-100 transition-colors"
+                className="rounded-full bg-navy px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-navy/15 hover:bg-navy-600 transition-colors"
               >
                 Browse products
               </a>
               <a
                 href="#process"
-                className="rounded-full border border-white/45 px-7 py-3.5 text-sm font-semibold text-white hover:border-brand-cyan hover:bg-white/10 transition-colors"
+                className="rounded-full border border-line bg-white/70 px-7 py-3.5 text-sm font-semibold text-navy backdrop-blur-sm hover:border-brand-cyan hover:text-brand-cyan-deep transition-colors"
               >
                 Learn our process
               </a>
@@ -171,9 +162,9 @@ export default function Home() {
               {HERO_BADGES.map(([icon, label]) => (
                 <li
                   key={label}
-                  className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-white/75"
+                  className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-body-soft"
                 >
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full border border-white/25 bg-white/10 text-brand-cyan">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full border border-line bg-white/80 text-brand-cyan">
                     {icon}
                   </span>
                   {label}
@@ -280,14 +271,12 @@ export default function Home() {
               className="group relative overflow-hidden rounded-2xl h-36 px-6 flex flex-col justify-center border border-line bg-linear-to-br from-white via-ice-100 to-ice-200 transition-colors hover:border-brand-cyan/45"
             >
               {/* large vial cropped by the card's top, right and bottom edges */}
-              {p.img && (
-                <img
-                  src={p.img}
-                  alt={`${p.name} vial`}
-                  draggable="false"
-                  className="pointer-events-none select-none absolute -right-1 -top-[16%] h-[132%] w-auto object-contain transition-transform duration-500 group-hover:-translate-y-1"
-                />
-              )}
+              <img
+                src="/vial.avif"
+                alt={`${p.name} vial`}
+                draggable="false"
+                className="pointer-events-none select-none absolute -right-1 -top-[16%] h-[132%] w-auto object-contain transition-transform duration-500 group-hover:-translate-y-1"
+              />
               <div className="relative z-10 max-w-[62%]">
                 <h3 className="text-2xl font-bold tracking-tight text-navy">{p.name}</h3>
                 <p className="mt-1 text-lg font-semibold text-brand-cyan-deep">
