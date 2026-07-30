@@ -3,8 +3,6 @@ import { motion } from "framer-motion";
 import HelixWave from "../components/HelixWave";
 import Footer from "../components/Footer";
 
-const FONT = { fontFamily: "'Space Grotesk', 'Inter', sans-serif" };
-
 const FEATURES = [
   ["Research First", "Every product is developed for laboratory research applications."],
   ["Third-Party Tested", "Each batch undergoes independent analytical testing."],
@@ -28,7 +26,7 @@ function Field({ label, type = "text", placeholder }) {
 
 export default function Contact() {
   return (
-    <div className="min-h-screen bg-white" style={FONT}>
+    <div className="min-h-screen bg-white">
       {/* ─────────────────────── HEADER ─────────────────────── */}
       <section
         className="relative overflow-hidden px-6 pt-20 md:pt-24 pb-14 text-center"

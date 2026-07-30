@@ -1,60 +1,10 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Search } from "lucide-react";
+import { ArrowRight, Search } from "lucide-react";
 import HelixWave from "../components/HelixWave";
 import Footer from "../components/Footer";
-
-const FONT = { fontFamily: "'Space Grotesk', 'Inter', sans-serif" };
-
-/* Bulk order tiers — index lines up with each product's prices array. */
-const TIERS = ["20", "50", "100", "200"];
-
-const VIALS = [
-  { name: "B12", spec: "10 mg", prices: [22.5, 21.5, 20.5, 19.0] },
-  { name: "BPC-157", spec: "5 mg", prices: [19.0, 18.0, 17.5, 16.0] },
-  { name: "BPC-157", spec: "10 mg", prices: [34.5, 33.0, 31.5, 29.0] },
-  { name: "CJC-1295 + IPA", spec: "5/5 mg", prices: [43.0, 41.0, 39.5, 36.0] },
-  { name: "DSIP", spec: "5 mg", prices: [17.5, 17.0, 16.5, 15.0] },
-  { name: "Epithalon", spec: "10 mg", prices: [17.5, 17.0, 16.5, 15.0] },
-  { name: "GHK-Cu", spec: "50 mg", prices: [41.5, 40.0, 38.5, 35.0] },
-  { name: "GLOW", spec: "10/10/50", prices: [73.0, 70.0, 67.0, 61.0] },
-  { name: "Glutathione", spec: "1500 mg", prices: [37.0, 35.5, 34.0, 31.0] },
-  { name: "Ipamorelin", spec: "10 mg", prices: [32.0, 31.0, 29.5, 27.0] },
-  { name: "Kisspeptin", spec: "5 mg", prices: [22.5, 21.5, 20.5, 19.0] },
-  { name: "KLOW", spec: "10/10/10/50", prices: [88.5, 85.0, 81.0, 74.0] },
-  { name: "KPV", spec: "10 mg", prices: [28.5, 27.5, 26.0, 24.0] },
-  { name: "MOTS-C", spec: "10 mg", prices: [40.5, 39.0, 37.0, 34.0] },
-  { name: "MT2", spec: "10 mg", prices: [23.5, 22.5, 22.0, 20.0] },
-  { name: "NAD+", spec: "500 mg", prices: [40.5, 39.0, 37.0, 34.0] },
-  { name: "NAD+", spec: "1000 mg", prices: [53.5, 51.5, 49.5, 45.0] },
-  { name: "Retatrutide", spec: "10 mg", prices: [52.5, 50.5, 48.0, 44.0] },
-  { name: "Retatrutide", spec: "20 mg", prices: [63.0, 60.5, 58.0, 53.0] },
-  { name: "Retatrutide", spec: "30 mg", prices: [79.0, 75.5, 72.5, 66.0] },
-  { name: "Selank", spec: "10 mg", prices: [41.5, 40.0, 38.5, 35.0] },
-  { name: "Semax", spec: "10 mg", prices: [41.5, 40.0, 38.5, 35.0] },
-  { name: "Semaglutide", spec: "10 mg", prices: [29.5, 28.5, 27.5, 25.0] },
-  { name: "Semaglutide", spec: "20 mg", prices: [35.5, 34.0, 33.0, 30.0] },
-  { name: "Semaglutide", spec: "30 mg", prices: [55.0, 52.5, 50.5, 46.0] },
-  { name: "TB-500", spec: "5 mg", prices: [33.0, 32.0, 30.5, 28.0] },
-  { name: "TB-500", spec: "10 mg", prices: [46.5, 44.5, 42.5, 39.0] },
-  { name: "Thymosin Alpha-1", spec: "5 mg", prices: [34.5, 33.0, 31.5, 29.0] },
-  { name: "Tirzepatide", spec: "10 mg", prices: [34.5, 33.0, 31.5, 29.0] },
-  { name: "Tirzepatide", spec: "20 mg", prices: [41.5, 40.0, 38.5, 35.0] },
-  { name: "Tirzepatide", spec: "30 mg", prices: [64.5, 62.0, 59.0, 54.0] },
-  { name: "Wolverine", spec: "10/10", prices: [53.5, 51.5, 49.5, 45.0] },
-];
-
-const PENS = [
-  { name: "Tirzepatide Pen", spec: "40 mg", prices: [175, 165, 155, 145] },
-  { name: "Retatrutide Pen", spec: "40 mg", prices: [175, 165, 155, 145] },
-  { name: "Biotin Pen", spec: "40 mg", prices: [170, 160, 150, 140] },
-  { name: "GLOW Pen", spec: "80 mg", prices: [175, 165, 155, 145] },
-  { name: "KLOW Pen", spec: "80 mg", prices: [170, 160, 150, 140] },
-  { name: "Glutathione Pen", spec: "1000 mg", prices: [170, 160, 150, 140] },
-  { name: "NAD+ & B12 Pen", spec: "1000 mg", prices: [170, 160, 150, 140] },
-  { name: "B Vitamin Complex Pen", spec: "1000 mg", prices: [170, 160, 150, 140] },
-  { name: "Wolverine Pen", spec: "40 mg", prices: [175, 165, 155, 145] },
-];
+import { PENS, TIERS, VIALS } from "../data/productData";
 
 export default function Products() {
   const [tab, setTab] = useState("vials");
@@ -63,15 +13,16 @@ export default function Products() {
 
   const source = tab === "vials" ? VIALS : PENS;
   const unit = tab === "vials" ? "vial" : "pen";
-  const list = source.filter((p) =>
-    `${p.name} ${p.spec}`.toLowerCase().includes(query.trim().toLowerCase())
+  const list = source.filter((product) =>
+    `${product.name} ${product.spec}`
+      .toLowerCase()
+      .includes(query.trim().toLowerCase()),
   );
 
   return (
-    <div className="min-h-screen bg-white text-body" style={FONT}>
-      {/* ─────────────────────── HEADER ─────────────────────── */}
+    <div className="min-h-screen bg-white text-body">
       <section
-        className="relative overflow-hidden px-6 pt-16 pb-14 text-center"
+        className="relative overflow-hidden px-6 pb-14 pt-16 text-center"
         style={{
           backgroundImage:
             "radial-gradient(70% 80% at 50% -10%, #e2eff9 0%, #f4f9fd 45%, #ffffff 78%)",
@@ -91,140 +42,189 @@ export default function Products() {
           <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-brand-cyan-deep">
             Product Catalog
           </p>
-          <h1 className="mt-4 text-4xl md:text-6xl font-bold tracking-tight text-navy">
+          <h1 className="mt-4 text-4xl font-bold tracking-tight text-navy md:text-6xl">
             Research peptides, priced for scale
           </h1>
-          <p className="mx-auto mt-5 max-w-xl text-sm md:text-base leading-relaxed text-body">
+          <p className="mx-auto mt-5 max-w-xl text-sm leading-relaxed text-body md:text-base">
             Volume pricing on every batch — the larger the order, the lower the
             per-unit price. Every product ships with a batch-specific COA.
           </p>
         </motion.div>
       </section>
 
-      {/* ─────────────────────── CONTROLS ─────────────────────── */}
-      <div className="sticky top-16 z-40 border-y border-line bg-white/90 backdrop-blur">
-        <div className="max-w-7xl mx-auto px-6 md:px-10 py-4 flex flex-wrap items-center gap-4">
-          {/* vials / pens tabs */}
-          <div className="flex rounded-full border border-line bg-ice-100 p-1 text-[13px]">
-            {["vials", "pens"].map((t) => (
+      {/* top-14 matches the navbar's scrolled height on phones, where this bar
+          actually becomes visible; it only grows to h-16 from md up. */}
+      {/* z-30 keeps this under the mobile drawer's scrim (z-40) and panel
+          (z-45). At z-40 it tied with the panel and, rendering later in the
+          DOM than Navbar, punched straight through the open drawer. */}
+      <div className="sticky top-14 z-30 border-y border-line bg-white/90 backdrop-blur md:top-16">
+        {/* Two tidy rows on a phone (tabs + search, then the volume strip)
+            instead of three wrapped ones; a single row from md up. DOM order is
+            tabs → search → volume, and the md:order-* classes put the volume
+            back in the middle on desktop with search pushed to the right. */}
+        <div className="mx-auto grid max-w-7xl grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-2.5 px-4 py-3 sm:px-6 md:flex md:flex-wrap md:gap-4 md:px-10 md:py-4">
+          <div className="flex shrink-0 rounded-full border border-line bg-ice-100 p-1 text-[13px] md:order-1">
+            {["vials", "pens"].map((type) => (
               <button
-                key={t}
-                onClick={() => setTab(t)}
-                className={`px-5 py-1.5 rounded-full capitalize transition-colors ${
-                  tab === t
-                    ? "bg-navy text-white font-semibold shadow-sm"
+                key={type}
+                type="button"
+                onClick={() => setTab(type)}
+                className={`min-h-9 rounded-full px-4 capitalize transition-colors sm:px-5 ${
+                  tab === type
+                    ? "bg-navy font-semibold text-white shadow-sm"
                     : "text-body hover:text-navy"
                 }`}
               >
-                {t}
+                {type}
               </button>
             ))}
           </div>
 
-          {/* order volume */}
-          <div className="flex items-center gap-3">
-            <span className="text-[11px] font-semibold uppercase tracking-[0.15em] text-body-soft">
+          <label className="flex min-w-0 items-center gap-2 rounded-full border border-line bg-ice-100 px-4 py-2 transition-colors focus-within:border-brand-cyan focus-within:bg-white md:order-3 md:ml-auto">
+            <Search size={14} className="shrink-0 text-brand-cyan-deep" />
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder={`Search ${tab}`}
+              className="w-full min-w-0 bg-transparent text-sm text-navy outline-none placeholder:text-body-soft/70 md:w-44"
+            />
+          </label>
+
+          <div className="col-span-2 flex items-center gap-3 md:order-2 md:col-span-1">
+            <span className="hidden shrink-0 text-[11px] font-semibold uppercase tracking-[0.15em] text-body-soft sm:inline">
               Order volume
             </span>
-            <div className="flex rounded-full border border-line bg-ice-100 p-1 text-[13px]">
-              {TIERS.map((t, i) => (
+            {/* tiers stretch to fill the row on a phone so each is an easy tap */}
+            <div className="flex w-full rounded-full border border-line bg-ice-100 p-1 text-[13px] md:w-auto">
+              {TIERS.map((amount, index) => (
                 <button
-                  key={t}
-                  onClick={() => setTier(i)}
-                  className={`px-4 py-1.5 rounded-full transition-colors ${
-                    tier === i
-                      ? "bg-navy text-white font-semibold shadow-sm"
+                  key={amount}
+                  type="button"
+                  onClick={() => setTier(index)}
+                  className={`min-h-9 flex-1 rounded-full px-3 transition-colors sm:px-4 md:flex-none ${
+                    tier === index
+                      ? "bg-navy font-semibold text-white shadow-sm"
                       : "text-body hover:text-navy"
                   }`}
                 >
-                  {t}+
+                  {amount}+
                 </button>
               ))}
             </div>
           </div>
-
-          {/* search */}
-          <label className="ml-auto flex items-center gap-2 rounded-full border border-line bg-ice-100 px-4 py-2 focus-within:border-brand-cyan focus-within:bg-white transition-colors">
-            <Search size={14} className="text-brand-cyan-deep" />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder={`Search ${tab}`}
-              className="w-36 md:w-44 bg-transparent text-sm text-navy placeholder:text-body-soft/70 outline-none"
-            />
-          </label>
         </div>
       </div>
 
-      {/* ─────────────────────── GRID ─────────────────────── */}
-      <section className="max-w-7xl mx-auto px-6 md:px-10 py-12">
-        <p className="mb-6 text-[13px] text-body-soft">
+      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 md:px-10">
+        <p className="mb-4 text-[12px] text-body-soft sm:mb-6 sm:text-[13px]">
           {list.length} {list.length === 1 ? "product" : "products"} · prices per{" "}
           {unit} at {TIERS[tier]}+ {unit}s
         </p>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {list.map((p, i) => {
-            const price = p.prices[tier];
-            const save = Math.round((1 - price / p.prices[0]) * 100);
+        {/* two up on phones so the catalog stays short to scroll */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3">
+          {list.map((product, index) => {
+            const price = product.prices[tier];
+            const saving = Math.round(
+              (1 - price / product.prices[0]) * 100,
+            );
+
             return (
-              <motion.div
-                key={`${tab}-${p.name}-${p.spec}`}
+              <motion.article
+                key={product.slug}
                 initial={{ opacity: 0, y: 18 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-40px" }}
-                transition={{ duration: 0.4, delay: (i % 3) * 0.07, ease: "easeOut" }}
-                className="group overflow-hidden rounded-2xl border border-line bg-white shadow-sm shadow-navy/5 transition-colors hover:border-brand-cyan/45"
+                transition={{
+                  duration: 0.4,
+                  delay: (index % 3) * 0.07,
+                  ease: "easeOut",
+                }}
+                className="group flex flex-col overflow-hidden rounded-xl border border-line bg-white shadow-sm shadow-navy/5 transition-all duration-300 hover:-translate-y-1 hover:border-brand-cyan/45 hover:shadow-[0_20px_50px_-28px_rgba(22,48,92,0.45)] sm:rounded-2xl"
               >
-                {/* product photo — the vial is a transparent cutout, so it is
-                    contained on the studio wash rather than cropped to fill */}
-                <div className="relative aspect-16/10 overflow-hidden bg-linear-to-br from-white via-ice-100 to-ice-200">
+                {/* square on phones — a 16:10 letterbox wastes the little
+                    width there is and shrinks an upright vial to nothing */}
+                <Link
+                  to={`/products/${product.slug}`}
+                  aria-label={`View ${product.name} ${product.spec} details`}
+                  className="relative block aspect-square overflow-hidden border-b border-line/70 bg-linear-to-br from-white via-ice-100 to-ice-200 sm:aspect-16/10"
+                >
                   <img
-                    src="/vial.avif"
-                    alt={`${p.name} ${p.spec} ${unit}`}
+                    src={product.image || "/vial.avif"}
+                    alt={`${product.name} ${product.spec} ${unit}`}
                     draggable="false"
-                    className="h-full w-full object-contain p-4 select-none transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
+                    onError={(event) => {
+                      event.currentTarget.onerror = null;
+                      event.currentTarget.src = "/vial.avif";
+                    }}
+                    className="h-full w-full select-none object-contain p-2 transition-transform duration-500 group-hover:scale-105 sm:p-4"
                   />
-                </div>
+                </Link>
 
-                {/* info */}
-                <div className="p-5">
-                  <div className="flex items-baseline justify-between gap-3">
-                    <h3 className="text-lg font-bold leading-tight tracking-tight text-navy">
-                      {p.name}
-                    </h3>
-                    <span className="text-[11px] tracking-wide text-body-soft whitespace-nowrap">
-                      {p.spec}
-                    </span>
-                  </div>
-                  <p className="mt-0.5 text-[11px] text-body-soft">
-                    Lyophilized · COA included
+                <div className="flex flex-1 flex-col p-3 sm:p-4">
+                  <Link
+                    to={`/products/${product.slug}`}
+                    className="transition-colors hover:text-brand-cyan-deep"
+                  >
+                    <h2 className="text-[13px] font-bold leading-snug tracking-tight text-navy sm:text-base">
+                      {product.name}
+                    </h2>
+                  </Link>
+
+                  {/* dose folded into the meta line — as its own element it
+                      either collided with the name or cost a whole extra row */}
+                  <p className="mt-1 text-[10px] leading-normal text-body-soft sm:text-[11px]">
+                    {product.spec}
+                    <span className="hidden sm:inline"> · {product.format}</span> · COA
+                    included
                   </p>
-                  <div className="mt-3 flex items-baseline justify-between">
-                    <p className="text-2xl font-bold text-navy">
+
+                  <div className="mt-2 mb-3 flex flex-wrap items-baseline gap-x-1.5 gap-y-1 sm:mt-3">
+                    <p className="text-base font-bold text-navy sm:text-xl">
                       ${price.toFixed(2)}
-                      <span className="ml-1 text-[11px] font-medium text-body-soft">
-                        / {unit}
-                      </span>
                     </p>
-                    {save > 0 && (
-                      <span className="rounded-full bg-brand-teal/12 px-2 py-0.5 text-[11px] font-semibold text-brand-teal">
-                        Save {save}%
+                    <span className="text-[10px] font-medium text-body-soft">
+                      / {unit}
+                    </span>
+                    {saving > 0 && (
+                      <span className="ml-auto rounded-full bg-brand-teal/12 px-1.5 py-0.5 text-[10px] font-semibold text-brand-teal">
+                        Save {saving}%
                       </span>
                     )}
                   </div>
+
+                  {/* Quiet outline rather than a solid navy slab: repeated down
+                      a two-column grid the filled version out-shouted the
+                      product shots. It fills in on hover/press.
+                      mt-auto keeps buttons aligned when a name wraps. */}
+                  <Link
+                    to={`/products/${product.slug}`}
+                    className="mt-auto inline-flex min-h-10 items-center justify-center gap-1.5 rounded-lg border border-line bg-white px-3 text-[11px] font-semibold text-navy transition-colors duration-300 hover:border-navy hover:bg-navy hover:text-white sm:min-h-11 sm:text-[12px]"
+                  >
+                    <span className="sm:hidden">View details</span>
+                    <span className="hidden sm:inline">View product details</span>
+                    <ArrowRight
+                      size={13}
+                      aria-hidden="true"
+                      className="shrink-0 transition-transform duration-300 group-hover:translate-x-0.5"
+                    />
+                  </Link>
                 </div>
-              </motion.div>
+              </motion.article>
             );
           })}
         </div>
 
         {list.length === 0 && (
           <div className="py-20 text-center">
-            <p className="text-body">No {tab} match “{query}”.</p>
+            <p className="text-body">
+              No {tab} match “{query}”.
+            </p>
             <button
+              type="button"
               onClick={() => setQuery("")}
-              className="mt-4 rounded-full border border-line bg-white px-5 py-2 text-sm font-semibold text-navy hover:border-brand-cyan hover:text-brand-cyan-deep transition-colors"
+              className="mt-4 rounded-full border border-line bg-white px-5 py-2 text-sm font-semibold text-navy transition-colors hover:border-brand-cyan hover:text-brand-cyan-deep"
             >
               Clear search
             </button>
@@ -232,9 +232,8 @@ export default function Products() {
         )}
       </section>
 
-      {/* ─────────────────── RESEARCH USE STRIP ─────────────────── */}
       <section className="border-t border-line bg-ice-100">
-        <div className="max-w-7xl mx-auto px-6 md:px-10 py-8">
+        <div className="mx-auto max-w-7xl px-6 py-8 md:px-10">
           <p className="text-[12px] leading-relaxed text-body">
             All products are intended exclusively for laboratory research purposes.
             They are not intended for human consumption, therapeutic use, or

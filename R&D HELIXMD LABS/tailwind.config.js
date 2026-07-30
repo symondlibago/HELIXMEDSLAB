@@ -9,10 +9,10 @@ module.exports = {
 	  extend: {
 		// --- ADDED FONT FAMILIES HERE ---
 		fontFamily: {
-			space: ['"Space Grotesk"', 'sans-serif'],   // for your hero
-			questrial: ['"Questrial"', 'sans-serif'],
-			sans: ['"Inter"', 'sans-serif'],
-			mono: ['"Space Mono"', 'monospace'],
+			// Tailwind v4 reads these from the @theme block in src/index.css;
+			// mirrored here so tooling that still parses this file agrees.
+			display: ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+			sans: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
 		  },
 		// --------------------------------
 		borderRadius: {

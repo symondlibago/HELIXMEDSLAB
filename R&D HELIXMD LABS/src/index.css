@@ -1,12 +1,8 @@
 @import "tailwindcss";
 @theme {
-  /* ── HelixMD Labs brand palette ──────────────────────────────
-     Sampled from the Retatrutide carton: navy ink from the logo,
-     the cyan → teal ribbon that runs across the face of the box,
-     and the cool ice tints of the printed stock. */
   --color-navy-900: #0a1830;
   --color-navy-800: #0f2246;
-  --color-navy: #16305c; /* logo navy */
+  --color-navy: #16305c;
   --color-navy-600: #1e3e72;
   --color-navy-500: #2c5296;
 
@@ -21,6 +17,13 @@
   --color-ice-100: #eff5fa;
   --color-ice-200: #e2ecf5;
   --color-line: #d8e4ef;
+
+  /* ── Typography ──────────────────────────────────────────────
+     Plus Jakarta Sans carries the display headings; Inter carries
+     every piece of running text, UI label and control. */
+  --font-display: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
 
   /* Colors */
   --color-background: hsl(var(--background));
@@ -145,17 +148,61 @@
   * {
     @apply border-border;
   }
+  html {
+    font-family: var(--font-sans);
+    text-rendering: optimizeLegibility;
+    -webkit-text-size-adjust: 100%;
+  }
+
   body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-      "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue","Space Grotesk",
-      sans-serif;
+    min-width: 320px;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.65;
+    letter-spacing: -0.008em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     @apply bg-background text-foreground;
   }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    text-wrap: balance;
+  }
+
+  p,
+  li {
+    text-wrap: pretty;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand-cyan);
+    outline-offset: 3px;
+  }
+
   code {
-    font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
   }
   ::selection {
     background: var(--color-brand-cyan);

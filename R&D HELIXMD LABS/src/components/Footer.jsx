@@ -58,8 +58,8 @@ export default function Footer() {
 
       {/* policies bar */}
       <div className="relative border-t border-line bg-white">
-        <div className="max-w-7xl mx-auto px-6 md:px-10 py-4 flex flex-wrap items-center gap-x-8 gap-y-2 text-[13px] text-body">
-          <span className="font-semibold text-navy">Our Policies</span>
+        <div className="max-w-7xl mx-auto px-6 md:px-10 py-4 flex flex-wrap items-center gap-x-5 gap-y-2.5 text-[13px] text-body sm:gap-x-8">
+          <span className="w-full font-semibold text-navy sm:w-auto">Our Policies</span>
           {[
             "Privacy Policy",
             "Shipping Policy",
@@ -67,11 +67,13 @@ export default function Footer() {
             "Terms and Condition",
             "Legal Disclaimer",
           ].map((p) => (
-            <a key={p} href="#" className="hover:text-navy hover:underline">
+            <a key={p} href="#" className="py-0.5 hover:text-navy hover:underline">
               {p}
             </a>
           ))}
-          <span className="ml-auto text-body-soft">
+          {/* full-width and left-aligned on a phone — ml-auto alone stranded it
+              on its own line, flush right, under a left-aligned list */}
+          <span className="w-full text-body-soft sm:ml-auto sm:w-auto">
             © {new Date().getFullYear()} HelixMD Labs
           </span>
         </div>

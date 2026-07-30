@@ -13,6 +13,7 @@ import HomePage from "./pages/HomePage";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Products from "./pages/Products";
+import ProductDetails from "./pages/ProductDetails";
 
 // Reset scroll to the top when navigating between pages (hash links handle themselves).
 function ScrollToTop() {
@@ -21,8 +22,19 @@ function ScrollToTop() {
 
   useEffect(() => {
     if (hash) return;
-    if (lenis) lenis.scrollTo(0, { immediate: true });
-    else window.scrollTo(0, 0);
+
+    if (lenis) {
+      // `force` is what makes this work from the mobile drawer. This effect
+      // runs before Navbar's, so the drawer's lenis.stop() is still in
+      // effect at this point, and a stopped instance ignores scrollTo
+      // outright — which left you wherever you were on the previous page.
+      lenis.scrollTo(0, { immediate: true, force: true });
+      // The outgoing page may have been taller than the incoming one, so
+      // let lenis re-measure rather than keep the old scroll limit.
+      lenis.resize();
+    } else {
+      window.scrollTo(0, 0);
+    }
   }, [pathname, hash, lenis]);
 
   return null;
@@ -47,6 +59,8 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/products" element={<Products />} />
+            {/* :productSlug matches the param ProductDetails reads via useParams */}
+            <Route path="/products/:productSlug" element={<ProductDetails />} />
           </Routes>
         </BrowserRouter>
       </div>

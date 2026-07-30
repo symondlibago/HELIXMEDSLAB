@@ -5,7 +5,8 @@ import {
   FileText,
   Package,
   ShieldCheck,
-  Check,
+  Dna,
+  ClipboardList,
   ArrowRight,
   FlaskConical,
   BadgeCheck,
@@ -19,13 +20,6 @@ import {
 import HelixWave from "./HelixWave";
 import Footer from "./Footer";
 
-/* Card fill lifted from the carton stock: a cool ice wash with the faintest
-   cyan bloom in the upper-left, the way the print catches light. */
-const CARD_BG = {
-  backgroundImage:
-    "radial-gradient(85% 65% at 16% 6%, rgba(23,168,224,0.10), rgba(23,168,224,0) 58%), linear-gradient(180deg, #ffffff 0%, #f2f7fc 100%)",
-};
-
 const reveal = {
   hidden: { opacity: 0, y: 24 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
@@ -38,17 +32,48 @@ const FEATURES = [
   ["Fast & Secure Shipping", "Carefully packaged and shipped with reliability in mind."],
 ];
 
+const PRODUCT_IMAGE_EXTENSION = "png";
+const productImage = (filename) =>
+  `/product images/vial/${filename}.${PRODUCT_IMAGE_EXTENSION}`;
+
 const PRODUCTS = [
-  { name: "Retatrutide", price: "52.50", spec: "10 mg · lyophilized · COA included" },
-  { name: "Semaglutide", price: "29.50", spec: "10 mg · lyophilized · COA included" },
-  { name: "MOTS-C", price: "40.50", spec: "10 mg · lyophilized · COA included" },
+  {
+    name: "Retatrutide",
+    price: "52.50",
+    dose: "20 mg",
+    image: productImage("RETA (20)"),
+  },
+  {
+    name: "Semaglutide",
+    price: "29.50",
+    dose: "20 mg",
+    image: productImage("SEMA (20)"),
+  },
+  {
+    name: "NAD+",
+    price: "53.50",
+    dose: "1000 mg",
+    image: productImage("NAD+ (1000)"),
+  },
 ];
 
-const CHECKLIST = [
-  "High purity standards",
-  "Batch-specific COAs",
-  "Third-party laboratory testing",
-  "Research use only",
+const PURITY_FEATURES = [
+  {
+    label: "High purity standards",
+    icon: ShieldCheck,
+  },
+  {
+    label: "Batch-specific COAs",
+    icon: Dna,
+  },
+  {
+    label: "Third-party laboratory testing",
+    icon: ClipboardList,
+  },
+  {
+    label: "Research use only",
+    icon: FlaskConical,
+  },
 ];
 
 const COA_ROWS = [
@@ -109,24 +134,24 @@ const Section = ({ children, className = "", ...props }) => (
 
 export default function Home() {
   return (
-    <div
-      className="bg-white text-body antialiased"
-      style={{ fontFamily: "'Space Grotesk', 'Inter', sans-serif" }}
-    >
+    <div className="bg-white text-body antialiased">
       {/* ───────────────────────── HERO ───────────────────────── */}
       <header
         id="top"
-        className="relative flex items-start md:items-center overflow-hidden min-h-[78vh] md:min-h-[90vh]"
+        className="relative overflow-hidden md:flex md:items-center md:min-h-[90vh]"
       >
-        {/* the render is a bright, icy scene — on narrow screens the crop is
-            biased right so the vial stays in frame beside the copy */}
+        {/* One element, two layouts: on phones it is a normal block that sits
+            above the copy, so the navy type never fights the artwork and no
+            wash is needed. From md up it becomes the full-bleed backdrop and
+            the copy overlays the open space beside the vial. */}
         <img
-          src="/hero.avif"
+          src="/hero1.avif"
           alt="HelixMD Labs research-grade peptide vial"
-          className="absolute inset-0 h-full w-full object-cover object-[68%_50%] md:object-center"
+          fetchPriority="high"
+          className="h-60 w-full object-cover object-[64%_50%] sm:h-72 md:absolute md:inset-0 md:h-full md:object-center"
         />
 
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-10 pt-24 pb-16 md:py-36">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 pt-8 pb-14 md:px-10 md:py-36">
           <motion.div
             initial="hidden"
             animate="visible"
@@ -137,28 +162,30 @@ export default function Home() {
             <h1 className="mt-4 md:mt-5 text-4xl md:text-7xl font-bold leading-[0.95] tracking-tight text-navy">
               RESEARCH GRADE PEPTIDES
             </h1>
-            <p className="mt-5 md:mt-6 max-w-60 md:max-w-md text-sm md:text-base leading-relaxed text-body">
+            {/* the old max-w-60 kept the copy clear of the vial when it sat on
+                top of the photo; stacked on mobile it just forced ragged wraps */}
+            <p className="mt-4 md:mt-6 md:max-w-md text-[15px] md:text-base leading-relaxed text-body">
               Precision-made peptides designed to support research with dependable
               quality and consistency.
             </p>
 
-            <div className="mt-7 md:mt-9 flex flex-col items-start gap-3 sm:flex-row sm:gap-4">
+            <div className="mt-7 md:mt-9 flex flex-col items-stretch gap-3 sm:flex-row sm:items-start sm:gap-4">
               <a
                 href="#catalog"
-                className="rounded-full bg-navy px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-navy/15 hover:bg-navy-600 transition-colors"
+                className="inline-flex min-h-12 items-center justify-center rounded-full bg-navy px-7 text-sm font-semibold text-white shadow-lg shadow-navy/15 hover:bg-navy-600 transition-colors"
               >
                 Browse products
               </a>
               <a
                 href="#process"
-                className="rounded-full border border-line bg-white/70 px-7 py-3.5 text-sm font-semibold text-navy backdrop-blur-sm hover:border-brand-cyan hover:text-brand-cyan-deep transition-colors"
+                className="inline-flex min-h-12 items-center justify-center rounded-full border border-line bg-white/70 px-7 text-sm font-semibold text-navy backdrop-blur-sm hover:border-brand-cyan hover:text-brand-cyan-deep transition-colors"
               >
                 Learn our process
               </a>
             </div>
 
-            {/* carton badge row */}
-            <ul className="mt-10 hidden flex-wrap gap-x-6 gap-y-3 sm:flex">
+            {/* carton badge row — two columns on a phone rather than hidden */}
+            <ul className="mt-8 grid grid-cols-2 gap-x-4 gap-y-3 sm:mt-10 sm:flex sm:flex-wrap sm:gap-x-6 sm:gap-y-3">
               {HERO_BADGES.map(([icon, label]) => (
                 <li
                   key={label}
@@ -189,150 +216,254 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ─────────────── CONFIDENCE / QUALITY CARDS ─────────────── */}
-      {/* the section itself spans the full width so the ribbon can run edge to
-          edge; the copy and cards keep their own max-w-7xl container inside */}
-      <Section id="difference" className="py-24">
-        <div className="max-w-7xl mx-auto px-6 md:px-10">
-          <div className="grid lg:grid-cols-2 gap-10 items-end">
-            <h2 className="text-4xl md:text-5xl font-semibold tracking-tight text-navy leading-[1.05]">
-              Precision
-            </h2>
-            <p className="text-body leading-relaxed">
-              We pay attention at every step, from sourcing materials to final testing.
-              Good research needs reliable materials, so we make sure ours are
-              consistent, accurate, and easy to trace
-            </p>
-          </div>
-        </div>
+      {/* ─────────────── PRECISION / QUALITY STORY ─────────────── */}
+      <Section id="difference" className="py-10 sm:py-12 lg:py-14">
+        <div className="mx-auto w-full max-w-[1560px] px-3 sm:px-5 lg:px-6">
+          <div className="relative isolate min-h-[620px] overflow-hidden rounded-[24px] border border-line bg-[#edf3fc] shadow-sm shadow-navy/5 sm:min-h-[590px] lg:min-h-[570px] xl:min-h-[540px]">
+            {/* The artwork now fills the entire Precision card. */}
+            <img
+              src="/precision.avif"
+              alt="Wolverine research vial displayed above a geometric laboratory pedestal"
+              draggable="false"
+              className="absolute inset-0 h-full w-full select-none object-cover object-[68%_50%] sm:object-[65%_50%] lg:object-center"
+            />
 
-        {/* the ribbon runs behind the grid — the cards are opaque, so it reads
-            through the gutters and the open bottom-right quadrant */}
-        <div className="relative mt-12 overflow-hidden">
-          <HelixWave
-            uid="difference-wave"
-            className="pointer-events-none absolute inset-x-0 top-1/2 h-[135%] w-full -translate-y-1/2 opacity-70"
-          />
+            {/* Strong white coverage behind the content on mobile and tablet. */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 lg:hidden"
+              style={{
+                background:
+                  "linear-gradient(90deg, rgba(255,255,255,0.99) 0%, rgba(255,255,255,0.97) 67%, rgba(255,255,255,0.86) 82%, rgba(255,255,255,0.42) 100%)",
+              }}
+            />
 
-          <div className="relative max-w-7xl mx-auto px-6 md:px-10">
-            <div className="grid gap-5 md:grid-cols-4">
-              {/* purity standard – large card, spans two columns; tall via min-height */}
-              <div
-                style={CARD_BG}
-                className="md:col-span-2 rounded-2xl border border-line p-8 flex flex-col justify-between min-h-[300px] shadow-sm shadow-navy/5"
-              >
-                <Eyebrow>Purity Standard</Eyebrow>
-                <div>
-                  <div className="flex items-end gap-1">
-                    <span className="text-8xl md:text-9xl font-bold text-navy leading-[0.85]">
-                      99
-                    </span>
-                    <span className="text-4xl font-semibold text-brand-cyan mb-3">%+</span>
+            {/* Desktop fade: solid white on the left, gradually revealing the artwork. */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 hidden lg:block"
+              style={{
+                background:
+                  "linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(255,255,255,1) 44%, rgba(255,255,255,0.96) 51%, rgba(255,255,255,0.78) 59%, rgba(255,255,255,0.28) 69%, rgba(255,255,255,0) 79%)",
+              }}
+            />
+
+            <div className="relative z-10 flex min-h-[inherit] items-center">
+              <div className="w-full p-6 sm:p-8 lg:w-[62%] lg:max-w-[900px] lg:p-10 xl:w-[60%] xl:p-11">
+                <div className="grid gap-7 md:grid-cols-[minmax(260px,1fr)_minmax(300px,350px)] md:items-center lg:gap-8 xl:gap-9">
+                  <div className="min-w-0">
+                    <Eyebrow>Quality you can trust</Eyebrow>
+                    <span className="mt-3 block h-px w-8 bg-brand-cyan" />
+
+                    <h2 className="mt-6 text-4xl font-semibold leading-none tracking-[-0.04em] text-navy sm:text-5xl lg:text-[50px]">
+                      Precision
+                    </h2>
+
+                    <p className="mt-5 max-w-[430px] text-sm leading-6 text-body sm:text-[15px] sm:leading-7">
+                      We pay attention at every step, from sourcing materials to final testing.
+                      Good research needs reliable materials, so we make sure ours are
+                      consistent, accurate, and easy to trace.
+                    </p>
                   </div>
-                  <p className="mt-6 max-w-md text-[13px] leading-relaxed text-body">
-                    Every production batch follows strict manufacturing procedures and quality
-                    assurance protocols before it is released.
-                  </p>
+
+                  <div className="rounded-2xl border border-line bg-white/80 p-4 shadow-sm shadow-navy/5 backdrop-blur-[2px] sm:p-5">
+                    <div className="grid grid-cols-[116px_minmax(0,1fr)] items-center gap-4 sm:grid-cols-[126px_minmax(0,1fr)] sm:gap-5">
+                      <div className="relative flex min-h-[132px] items-center justify-center border-r border-line pr-4 sm:min-h-[144px] sm:pr-5">
+                        <span className="absolute h-24 w-24 rounded-full border border-brand-cyan/20 sm:h-28 sm:w-28" />
+                        <span className="absolute h-[72px] w-[72px] rounded-full border border-brand-cyan/25 sm:h-20 sm:w-20" />
+                        <div className="relative flex items-end">
+                          <span className="text-[58px] font-bold leading-none tracking-[-0.07em] text-navy sm:text-[66px]">
+                            99
+                          </span>
+                          <span className="mb-1.5 text-2xl font-bold text-brand-cyan-deep sm:text-[27px]">
+                            %+
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-brand-cyan-deep sm:text-[13px]">
+                          Purity standard
+                        </p>
+                        <p className="mt-3 flex items-start gap-2 text-[11px] leading-[1.65] text-body sm:text-xs">
+                          <BadgeCheck
+                            aria-hidden="true"
+                            className="mt-0.5 h-4 w-4 shrink-0 text-brand-cyan-deep"
+                            strokeWidth={2}
+                          />
+                          Every batch follows strict manufacturing procedures and quality
+                          assurance protocols before release.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-7 grid gap-6 border-t border-line/90 pt-6 sm:grid-cols-3 sm:gap-0 lg:mt-8 lg:pt-7">
+                  <article className="sm:pr-5">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-full border border-line bg-white/80 text-brand-cyan-deep shadow-sm backdrop-blur-sm">
+                      <Search aria-hidden="true" size={20} strokeWidth={1.8} />
+                    </span>
+                    <h3 className="mt-3.5 text-sm font-semibold text-navy">
+                      Independent Testing
+                    </h3>
+                    <p className="mt-1.5 text-[11px] leading-[1.65] text-body sm:text-xs">
+                      Products are verified through third-party analytical testing to confirm
+                      identity and purity.
+                    </p>
+                  </article>
+
+                  <article className="sm:border-l sm:border-line sm:px-5">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-full border border-line bg-white/80 text-brand-cyan-deep shadow-sm backdrop-blur-sm">
+                      <FileText aria-hidden="true" size={20} strokeWidth={1.8} />
+                    </span>
+                    <h3 className="mt-3.5 text-sm font-semibold text-navy">
+                      Batch Documentation
+                    </h3>
+                    <p className="mt-1.5 text-[11px] leading-[1.65] text-body sm:text-xs">
+                      Access detailed Certificates of Analysis and batch-specific
+                      documentation.
+                    </p>
+                  </article>
+
+                  <article className="sm:border-l sm:border-line sm:pl-5">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-full border border-line bg-white/80 text-brand-cyan-deep shadow-sm backdrop-blur-sm">
+                      <Package aria-hidden="true" size={20} strokeWidth={1.8} />
+                    </span>
+                    <h3 className="mt-3.5 text-sm font-semibold text-navy">
+                      Reliable Fulfillment
+                    </h3>
+                    <p className="mt-1.5 text-[11px] leading-[1.65] text-body sm:text-xs">
+                      Orders are carefully packaged and shipped securely to help preserve
+                      product integrity in transit.
+                    </p>
+                  </article>
                 </div>
               </div>
-
-              {/* independent testing – top right */}
-              <InfoCard
-                icon={<Search size={16} />}
-                title="Independent testing"
-                desc="Products are verified through third-party analytical testing to confirm identity and purity."
-              />
-
-              {/* batch documentation – top right */}
-              <InfoCard
-                icon={<FileText size={16} />}
-                title="Batch documentation"
-                desc="Access detailed Certificates of Analysis and batch-specific documentation."
-              />
-
-              {/* reliable fulfillment – bottom left, leaving open space at bottom right */}
-              <InfoCard
-                icon={<Package size={16} />}
-                title="Reliable fulfillment"
-                desc="Orders are carefully packaged and shipped securely to help preserve product integrity in transit."
-                className="md:col-span-2"
-              />
             </div>
           </div>
         </div>
       </Section>
 
       {/* ─────────────────── PRODUCT CATALOG ─────────────────── */}
-      <Section id="catalog" className="max-w-7xl mx-auto px-6 md:px-10 pb-8">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <Section
+        id="catalog"
+        className="mx-auto max-w-7xl px-4 pb-12 sm:px-6 md:px-8 lg:px-10"
+      >
+        <div className="mb-5 flex items-center justify-center gap-2.5 sm:mb-7 sm:gap-4">
+          <span className="h-px min-w-5 flex-1 bg-linear-to-r from-transparent to-brand-cyan/70 sm:max-w-20" />
+          <h2 className="whitespace-nowrap text-center text-[21px] font-bold leading-tight tracking-[-0.025em] text-navy min-[390px]:text-2xl sm:text-[28px] lg:text-3xl">
+            Research. <span className="text-brand-cyan-deep">Reliable.</span> Results.
+          </h2>
+          <span className="h-px min-w-5 flex-1 bg-linear-to-l from-transparent to-brand-cyan/70 sm:max-w-20" />
+        </div>
+
+        {/* One spacious card on phones, two on tablets, and three only when
+            there is enough desktop width. This prevents squeezed copy and
+            keeps the product image at a consistent visual size. */}
+        <div className="grid grid-cols-1 gap-x-4 gap-y-7 pb-4 md:grid-cols-2 xl:grid-cols-3">
           {PRODUCTS.map((p) => (
-            <div
-              key={p.name}
-              className="group relative overflow-hidden rounded-2xl h-36 px-6 flex flex-col justify-center border border-line bg-linear-to-br from-white via-ice-100 to-ice-200 transition-colors hover:border-brand-cyan/45"
+            <article
+              key={`${p.name}-${p.dose}`}
+              className="group relative isolate min-h-[260px] overflow-hidden rounded-xl border border-line bg-white px-5 py-5 shadow-sm shadow-navy/5 transition duration-300 hover:-translate-y-0.5 hover:border-brand-cyan/55 hover:shadow-md hover:shadow-navy/8 sm:min-h-[280px] sm:px-6 sm:py-6 md:min-h-[270px] xl:min-h-[290px]"
             >
-              {/* large vial cropped by the card's top, right and bottom edges */}
-              <img
-                src="/vial.avif"
-                alt={`${p.name} vial`}
-                draggable="false"
-                className="pointer-events-none select-none absolute -right-1 -top-[16%] h-[132%] w-auto object-contain transition-transform duration-500 group-hover:-translate-y-1"
-              />
-              <div className="relative z-10 max-w-[62%]">
-                <h3 className="text-2xl font-bold tracking-tight text-navy">{p.name}</h3>
-                <p className="mt-1 text-lg font-semibold text-brand-cyan-deep">
+              <div className="relative z-10 flex h-full max-w-[55%] flex-col items-start sm:max-w-[53%] xl:max-w-[52%]">
+                <h3 className="text-lg font-bold leading-tight tracking-tight text-navy sm:text-xl">
+                  {p.name}
+                </h3>
+                <p className="mt-1.5 text-base font-bold text-brand-cyan-deep sm:text-lg">
                   ${p.price}
                 </p>
-                <p className="mt-2 text-[11px] tracking-wide text-body">{p.spec}</p>
+
+                <ul className="mt-4 space-y-1 text-[12px] leading-relaxed text-body sm:text-[13px]">
+                  <li>• {p.dose} · Lyophilized</li>
+                  <li>• COA included</li>
+                </ul>
+
+                <a
+                  href="/products"
+                  aria-label={`View ${p.name} details`}
+                  className="mt-auto inline-flex min-h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-lg border border-brand-cyan bg-white px-3.5 py-2.5 text-[11px] font-bold text-brand-cyan-deep shadow-sm transition-colors hover:bg-brand-cyan-deep hover:text-white sm:px-4 sm:text-xs"
+                >
+                  View Details <ArrowRight size={14} />
+                </a>
               </div>
-            </div>
+              <div className="pointer-events-none absolute inset-y-0 right-0 z-0 w-[54%] rounded-r-xl bg-linear-to-l from-ice-100/85 to-transparent sm:w-[56%]" />
+
+              <img
+                src={p.image}
+                alt={`${p.name} ${p.dose} vial`}
+                draggable="false"
+                onError={(event) => {
+                  event.currentTarget.onerror = null;
+                  event.currentTarget.src = "/vial.avif";
+                }}
+                className="pointer-events-none absolute -bottom-15 -right-12 z-20 h-auto w-[285px] max-w-none origin-bottom select-none object-contain object-bottom transition-transform duration-500 group-hover:scale-[1.025] min-[390px]:-right-14 min-[390px]:w-[310px] sm:-right-16 sm:w-[335px] md:-right-12 md:w-[290px] lg:-right-14 lg:w-[315px] xl:-right-16 xl:w-[350px]"
+              />
+            </article>
           ))}
         </div>
       </Section>
 
       {/* ─────────────────── BUILT AROUND PRECISION ─────────────────── */}
-      <Section id="process" className="max-w-7xl mx-auto px-6 md:px-10 py-16">
-        {/* ice frame, the way the carton floats its panels on white stock */}
-        <div className="relative overflow-hidden rounded-3xl border border-line bg-ice-100 p-4 md:p-6">
-          {/* the cutout is bottom-anchored and bleeds past the frame's left and
-              bottom edges, so the forearm runs off the corner rather than
-              sitting in a box */}
-          <img
-            src="/han.avif"
-            alt="Researcher holding a HelixMD Labs GIP/GLP-1 vial"
-            className="hidden lg:block absolute -left-20 -bottom-2 h-130 w-auto object-contain select-none"
-            draggable="false"
+      <Section id="process" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 md:px-10">
+        <div className="relative overflow-hidden rounded-3xl border border-line bg-white shadow-sm shadow-navy/5">
+          {/* Mobile/tablet artwork: keep the full image readable above the copy. */}
+          <div
+            role="img"
+            aria-label="Researcher holding a HelixMD Labs research vial"
+            className="aspect-[16/9] w-full bg-cover bg-left bg-no-repeat sm:aspect-[2/1] lg:hidden"
+            style={{ backgroundImage: "url('/puritysection.avif')" }}
           />
 
-          {/* stacked photo for small screens — scaled to the card width and cut
-              off at the wrist so the forearm runs behind the panel below, the
-              same bottom-anchored composition the desktop layout uses */}
-          <div className="lg:hidden relative mx-auto w-full max-w-md aspect-5/4 overflow-hidden">
-            <img
-              src="/han.avif"
-              alt="Researcher holding a HelixMD Labs GIP/GLP-1 vial"
-              className="absolute inset-x-0 top-0 w-full select-none"
-              draggable="false"
-            />
-          </div>
+          {/* Desktop artwork fills the section. The white gradient replaces the
+              separate content card and softly hides the right half of the image. */}
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 hidden bg-cover bg-left bg-no-repeat lg:block"
+            style={{ backgroundImage: "url('/puritysection.avif')" }}
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 hidden lg:block"
+            style={{
+              background:
+                "linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0) 34%, rgba(255,255,255,0.58) 45%, rgba(255,255,255,0.92) 56%, rgba(255,255,255,1) 68%, rgba(255,255,255,1) 100%)",
+            }}
+          />
 
-          <div className="relative">
-            <div className="lg:w-3/5 lg:ml-auto rounded-2xl border border-line bg-white p-8 md:p-12 shadow-sm shadow-navy/5">
+          <div className="relative lg:grid lg:min-h-[480px] lg:grid-cols-[43%_57%] xl:min-h-[510px] xl:grid-cols-[45%_55%]">
+            <div aria-hidden="true" className="hidden lg:block" />
+
+            <div className="bg-white px-6 py-9 sm:px-9 sm:py-11 lg:flex lg:flex-col lg:justify-center lg:bg-transparent lg:px-10 lg:py-12 xl:px-14">
               <Eyebrow>Purity</Eyebrow>
-              <h2 className="mt-4 text-4xl md:text-5xl font-semibold tracking-tight text-navy leading-[1.05]">
+              <h2 className="mt-3 text-3xl font-semibold leading-[1.05] tracking-tight text-navy sm:text-4xl lg:text-[42px] xl:text-5xl">
                 Trusted Standards
               </h2>
-              <p className="mt-5 text-body leading-relaxed">
+              <span className="mt-4 h-0.5 w-9 bg-brand-cyan/50" />
+
+              <p className="mt-4 max-w-xl text-sm leading-relaxed text-body sm:text-[15px]">
                 Reliable research starts with dependable materials. That&rsquo;s why we
                 make every batch the same way, test it independently, and keep clear
-                records
+                records.
               </p>
-              <ul className="mt-8 space-y-4">
-                {CHECKLIST.map((item) => (
-                  <li key={item} className="flex items-center gap-3">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-cyan/12 text-brand-cyan-deep">
-                      <Check size={13} />
+
+              <ul className="mt-6 max-w-xl divide-y divide-line/80 sm:mt-7">
+                {PURITY_FEATURES.map(({ label, icon: Icon }) => (
+                  <li
+                    key={label}
+                    className="flex items-center gap-4 py-3 first:pt-0 last:pb-0 sm:gap-5 sm:py-3.5"
+                  >
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-line bg-ice-100/85 text-navy shadow-sm sm:h-11 sm:w-11 lg:h-12 lg:w-12">
+                      <Icon
+                        aria-hidden="true"
+                        className="h-5 w-5 sm:h-[22px] sm:w-[22px]"
+                        strokeWidth={1.8}
+                      />
                     </span>
-                    <span className="text-sm text-navy">{item}</span>
+                    <span className="text-sm font-semibold text-navy sm:text-[15px]">
+                      {label}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -461,23 +592,6 @@ export default function Home() {
 
       {/* ─────────────────────── FOOTER ─────────────────────── */}
       <Footer />
-    </div>
-  );
-}
-
-/* ─────────────────────── helpers ─────────────────────── */
-
-function InfoCard({ icon, title, desc, className = "" }) {
-  return (
-    <div
-      style={CARD_BG}
-      className={`rounded-2xl border border-line p-7 flex flex-col shadow-sm shadow-navy/5 ${className}`}
-    >
-      <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-cyan/10 text-brand-cyan-deep">
-        {icon}
-      </span>
-      <h3 className="mt-5 text-base font-semibold text-navy">{title}</h3>
-      <p className="mt-2 text-[13px] leading-relaxed text-body">{desc}</p>
     </div>
   );
 }

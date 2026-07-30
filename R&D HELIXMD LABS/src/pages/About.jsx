@@ -4,8 +4,6 @@ import { Microscope, CreditCard } from "lucide-react";
 import HelixWave from "../components/HelixWave";
 import Footer from "../components/Footer";
 
-const FONT = { fontFamily: "'Space Grotesk', 'Inter', sans-serif" };
-
 const PARAGRAPHS = [
   "HelixMD Labs is a trusted leader in the field of research and lab-use peptides. Peptides, composed of short chains of amino acids, are closely related to proteins, which consist of longer amino acid chains.",
   "For decades, peptides have been extensively studied worldwide, becoming invaluable resources for researchers and laboratories. Our mission is to empower academic and institutional research by offering an extensive catalog of high-quality, artificially synthesized peptide compounds.",
@@ -29,7 +27,7 @@ const CARDS = [
 
 export default function About() {
   return (
-    <div className="min-h-screen bg-white" style={FONT}>
+    <div className="min-h-screen bg-white">
       {/* ─────────────────────── HERO ─────────────────────── */}
       <section>
         <motion.div
