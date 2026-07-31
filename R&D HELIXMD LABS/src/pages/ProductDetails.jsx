@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo, useState } from "react";
+// useEffect/useState come back with the order-volume selector below.
+import React, { useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -17,8 +18,10 @@ import Footer from "../components/Footer";
 import {
   ALL_PRODUCTS,
   getProductBySlug,
-  TIERS,
+  getSinglePrice,
 } from "../data/productData";
+// Volume pricing is off for the R&D site — restore with the “Select order
+// volume” block below: add TIERS back to the import above.
 
 const QUALITY_ITEMS = [
   {
@@ -41,11 +44,11 @@ const QUALITY_ITEMS = [
 export default function ProductDetails() {
   const { productSlug } = useParams();
   const product = getProductBySlug(productSlug);
-  const [tier, setTier] = useState(0);
-
-  useEffect(() => {
-    setTier(0);
-  }, [productSlug]);
+  // const [tier, setTier] = useState(0);
+  //
+  // useEffect(() => {
+  //   setTier(0);
+  // }, [productSlug]);
 
   const relatedProducts = useMemo(() => {
     if (!product) return [];
@@ -84,8 +87,9 @@ export default function ProductDetails() {
     );
   }
 
-  const price = product.prices[tier];
-  const saving = Math.round((1 - price / product.prices[0]) * 100);
+  const price = getSinglePrice(product);
+  // const price = product.prices[tier];
+  // const saving = Math.round((1 - price / product.prices[0]) * 100);
 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-body">
@@ -178,59 +182,32 @@ export default function ProductDetails() {
                 <div className="flex flex-wrap items-end justify-between gap-4">
                   <div>
                     <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-body-soft">
-                      Price per {product.unit}
+                      Price per single {product.unit}
                     </p>
                     <p className="mt-1 text-3xl font-bold tracking-tight text-navy sm:text-4xl">
                       ${price.toFixed(2)}
                     </p>
                   </div>
 
+                  {/* Tier discount badge — restore with volume pricing:
                   {saving > 0 && (
                     <span className="rounded-full bg-brand-teal/10 px-3 py-1.5 text-xs font-semibold text-brand-teal">
                       Save {saving}%
                     </span>
-                  )}
+                  )} */}
                 </div>
 
-                <div className="mt-5">
-                  <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-body-soft">
-                    Select order volume
-                  </p>
-                  <div className="grid grid-cols-4 gap-2">
-                    {TIERS.map((amount, index) => (
-                      <button
-                        key={amount}
-                        type="button"
-                        onClick={() => setTier(index)}
-                        aria-pressed={tier === index}
-                        className={`rounded-xl border px-2 py-3 text-center transition-all ${
-                          tier === index
-                            ? "border-navy bg-navy text-white shadow-md shadow-navy/10"
-                            : "border-line bg-white text-body hover:border-brand-cyan/50 hover:text-navy"
-                        }`}
-                      >
-                        <span className="block text-sm font-bold">
-                          {amount}+
-                        </span>
-                        <span
-                          className={`mt-0.5 block text-[10px] ${
-                            tier === index
-                              ? "text-white/70"
-                              : "text-body-soft"
-                          }`}
-                        >
-                          units
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
+                {/* ── Select order volume ─────────────────────────────
+                    Disabled for the R&D site (singles only). Restore this
+                    block together with the TIERS import, the `tier` state
+                    and the tier-based price/saving lines above.
+                ──────────────────────────────────────────────────── */}
               </div>
 
               <ul className="mt-6 grid gap-3 text-[13px] text-navy sm:grid-cols-2">
                 {[
                   "Batch-specific COA",
-                  "Volume pricing",
+                  "Single-unit pricing",
                   "Controlled packaging",
                   "Research use only",
                 ].map((item) => (
@@ -265,8 +242,8 @@ export default function ProductDetails() {
               </div>
 
               <p className="mt-4 text-[11px] leading-relaxed text-body-soft">
-                Pricing shown is per unit at the selected order-volume tier.
-                Availability and batch documentation can be confirmed before ordering.
+                Pricing shown is per single {product.unit}. Availability and batch
+                documentation can be confirmed before ordering.
               </p>
             </motion.div>
           </div>

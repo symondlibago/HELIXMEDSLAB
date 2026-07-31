@@ -4,11 +4,11 @@ import { motion } from "framer-motion";
 import { ArrowRight, Search } from "lucide-react";
 import HelixWave from "../components/HelixWave";
 import Footer from "../components/Footer";
-import { PENS, TIERS, VIALS } from "../data/productData";
+import { getSinglePrice, PENS, VIALS } from "../data/productData";
 
 export default function Products() {
   const [tab, setTab] = useState("vials");
-  const [tier, setTier] = useState(0);
+  // const [tier, setTier] = useState(0);
   const [query, setQuery] = useState("");
 
   const source = tab === "vials" ? VIALS : PENS;
@@ -51,17 +51,7 @@ export default function Products() {
           </p>
         </motion.div>
       </section>
-
-      {/* top-14 matches the navbar's scrolled height on phones, where this bar
-          actually becomes visible; it only grows to h-16 from md up. */}
-      {/* z-30 keeps this under the mobile drawer's scrim (z-40) and panel
-          (z-45). At z-40 it tied with the panel and, rendering later in the
-          DOM than Navbar, punched straight through the open drawer. */}
       <div className="sticky top-14 z-30 border-y border-line bg-white/90 backdrop-blur md:top-16">
-        {/* Two tidy rows on a phone (tabs + search, then the volume strip)
-            instead of three wrapped ones; a single row from md up. DOM order is
-            tabs → search → volume, and the md:order-* classes put the volume
-            back in the middle on desktop with search pushed to the right. */}
         <div className="mx-auto grid max-w-7xl grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-2.5 px-4 py-3 sm:px-6 md:flex md:flex-wrap md:gap-4 md:px-10 md:py-4">
           <div className="flex shrink-0 rounded-full border border-line bg-ice-100 p-1 text-[13px] md:order-1">
             {["vials", "pens"].map((type) => (
@@ -90,11 +80,16 @@ export default function Products() {
             />
           </label>
 
+          {/* ── Order volume (20+/50+/100+/200+) ──────────────────────────
+              Disabled for the R&D site, which sells singles only. To restore:
+              uncomment this block, the TIERS import, the `tier` state, and the
+              tier-based price/saving lines in the grid below.
+
           <div className="col-span-2 flex items-center gap-3 md:order-2 md:col-span-1">
             <span className="hidden shrink-0 text-[11px] font-semibold uppercase tracking-[0.15em] text-body-soft sm:inline">
               Order volume
             </span>
-            {/* tiers stretch to fill the row on a phone so each is an easy tap */}
+            {/* tiers stretch to fill the row on a phone so each is an easy tap *\/}
             <div className="flex w-full rounded-full border border-line bg-ice-100 p-1 text-[13px] md:w-auto">
               {TIERS.map((amount, index) => (
                 <button
@@ -112,22 +107,23 @@ export default function Products() {
               ))}
             </div>
           </div>
+          ──────────────────────────────────────────────────────────────── */}
         </div>
       </div>
 
       <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12 md:px-10">
         <p className="mb-4 text-[12px] text-body-soft sm:mb-6 sm:text-[13px]">
-          {list.length} {list.length === 1 ? "product" : "products"} · prices per{" "}
-          {unit} at {TIERS[tier]}+ {unit}s
+          {list.length} {list.length === 1 ? "product" : "products"} · price per
+          single {unit}
         </p>
 
         {/* two up on phones so the catalog stays short to scroll */}
         <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3">
           {list.map((product, index) => {
-            const price = product.prices[tier];
-            const saving = Math.round(
-              (1 - price / product.prices[0]) * 100,
-            );
+            const price = getSinglePrice(product);
+            // Volume pricing disabled — no tier discount to advertise.
+            // const price = product.prices[tier];
+            // const saving = Math.round((1 - price / product.prices[0]) * 100);
 
             return (
               <motion.article
@@ -187,11 +183,12 @@ export default function Products() {
                     <span className="text-[10px] font-medium text-body-soft">
                       / {unit}
                     </span>
+                    {/* Tier discount badge — restore with volume pricing:
                     {saving > 0 && (
                       <span className="ml-auto rounded-full bg-brand-teal/12 px-1.5 py-0.5 text-[10px] font-semibold text-brand-teal">
                         Save {saving}%
                       </span>
-                    )}
+                    )} */}
                   </div>
 
                   {/* Quiet outline rather than a solid navy slab: repeated down

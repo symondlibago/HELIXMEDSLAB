@@ -19,6 +19,11 @@ import {
 } from "./ui/accordion";
 import HelixWave from "./HelixWave";
 import Footer from "./Footer";
+import {
+  createProductSlug,
+  getProductBySlug,
+  getSinglePrice,
+} from "../data/productData";
 
 const reveal = {
   hidden: { opacity: 0, y: 24 },
@@ -36,25 +41,23 @@ const PRODUCT_IMAGE_EXTENSION = "png";
 const productImage = (filename) =>
   `/product images/vial/${filename}.${PRODUCT_IMAGE_EXTENSION}`;
 
+/* Prices are read from the catalog rather than hard-coded, so the homepage
+   can't drift out of step with /products. (It already had: this listed
+   Retatrutide 20 mg at $52.50, which is the 10 mg base price.) */
+const featured = (name, spec, filename) => {
+  const product = getProductBySlug(createProductSlug(name, spec));
+  return {
+    name,
+    dose: spec,
+    price: product ? getSinglePrice(product).toFixed(2) : null,
+    image: productImage(filename),
+  };
+};
+
 const PRODUCTS = [
-  {
-    name: "Retatrutide",
-    price: "52.50",
-    dose: "20 mg",
-    image: productImage("RETA (20)"),
-  },
-  {
-    name: "Semaglutide",
-    price: "29.50",
-    dose: "20 mg",
-    image: productImage("SEMA (20)"),
-  },
-  {
-    name: "NAD+",
-    price: "53.50",
-    dose: "1000 mg",
-    image: productImage("NAD+ (1000)"),
-  },
+  featured("Retatrutide", "20 mg", "RETA (20)"),
+  featured("Semaglutide", "20 mg", "SEMA (20)"),
+  featured("NAD+", "1000 mg", "NAD+ (1000)"),
 ];
 
 const PURITY_FEATURES = [
