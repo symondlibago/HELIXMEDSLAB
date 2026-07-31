@@ -144,6 +144,15 @@
   }
 }
 
+/* Feathers an image's left edge into the page background. Used by the desktop
+   hero, where the artwork is contained (not cover-cropped) and so no longer
+   reaches the left side of the viewport — without this there is a hard seam
+   where the artwork stops. */
+@utility hero-fade-left {
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 24%);
+  mask-image: linear-gradient(to right, transparent 0%, #000 24%);
+}
+
 @layer base {
   * {
     @apply border-border;

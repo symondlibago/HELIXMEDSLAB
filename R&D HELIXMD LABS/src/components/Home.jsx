@@ -141,18 +141,28 @@ export default function Home() {
       {/* ───────────────────────── HERO ───────────────────────── */}
       <header
         id="top"
-        className="relative overflow-hidden md:flex md:items-center md:min-h-[90vh]"
+        className="relative overflow-hidden bg-white md:flex md:items-center md:min-h-[580px] lg:min-h-[640px]"
       >
-        {/* One element, two layouts: on phones it is a normal block that sits
-            above the copy, so the navy type never fights the artwork and no
-            wash is needed. From md up it becomes the full-bleed backdrop and
-            the copy overlays the open space beside the vial. */}
-        <img
-          src="/hero1.avif"
-          alt="HelixMD Labs research-grade peptide vial"
-          fetchPriority="high"
-          className="h-60 w-full object-cover object-[64%_50%] sm:h-72 md:absolute md:inset-0 md:h-full md:object-center"
-        />
+        {/* <picture> rather than two <img> tags so only the matching file is
+            fetched — a display:none image still downloads. The portrait
+            artwork below md sits as a block above the copy (navy type never
+            fights it, so no wash is needed); from md up the landscape one
+            becomes the full-bleed backdrop with the copy overlaid.
+
+            object-bottom on desktop, not object-center: the box is ~2.2:1 but
+            the artwork is 1.82:1, so ~15% has to be cropped vertically.
+            Centred, that split the loss and sliced the base off the vial.
+            Anchoring to the bottom takes it all off the empty top instead and
+            keeps the vial and its reflection whole. */}
+        <picture>
+          <source media="(min-width: 768px)" srcSet="/hero1.avif" />
+          <img
+            src="/mobile-hero.avif"
+            alt="HelixMD Labs research-grade peptide vial"
+            fetchPriority="high"
+            className="h-[46vh] max-h-[440px] min-h-[300px] w-full object-cover object-center md:absolute md:inset-0 md:h-full md:max-h-none md:min-h-0 md:object-bottom"
+          />
+        </picture>
 
         <div className="relative z-10 w-full max-w-7xl mx-auto px-6 pt-8 pb-14 md:px-10 md:py-36">
           <motion.div
