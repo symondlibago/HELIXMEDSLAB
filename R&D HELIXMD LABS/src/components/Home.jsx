@@ -141,13 +141,14 @@ export default function Home() {
       {/* ───────────────────────── HERO ───────────────────────── */}
       <header
         id="top"
-        className="relative overflow-hidden bg-white md:flex md:items-center md:min-h-[580px] lg:min-h-[640px]"
+        className="relative flex min-h-[86vh] items-start overflow-hidden bg-white md:min-h-[580px] md:items-center lg:min-h-[640px]"
       >
         {/* <picture> rather than two <img> tags so only the matching file is
-            fetched — a display:none image still downloads. The portrait
-            artwork below md sits as a block above the copy (navy type never
-            fights it, so no wash is needed); from md up the landscape one
-            becomes the full-bleed backdrop with the copy overlaid.
+            fetched — a display:none image still downloads. Both breakpoints now
+            use the same treatment: a full-bleed backdrop with the copy laid
+            over it, matching the partner site. No wash is needed — the left
+            70% of the portrait artwork measures 189–248 luminance, so navy
+            type clears 5.5:1 contrast against it at its darkest.
 
             object-bottom on desktop, not object-center: the box is ~2.2:1 but
             the artwork is 1.82:1, so ~15% has to be cropped vertically.
@@ -160,51 +161,61 @@ export default function Home() {
             src="/mobile-hero.avif"
             alt="HelixMD Labs research-grade peptide vial"
             fetchPriority="high"
-            className="h-[46vh] max-h-[440px] min-h-[300px] w-full object-cover object-center md:absolute md:inset-0 md:h-full md:max-h-none md:min-h-0 md:object-bottom"
+            className="absolute inset-0 h-full w-full object-cover object-center md:object-bottom"
           />
         </picture>
 
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 pt-8 pb-14 md:px-10 md:py-36">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 pt-12 pb-14 md:px-10 md:py-36">
           <motion.div
             initial="hidden"
             animate="visible"
             variants={reveal}
             className="max-w-xl"
           >
-            <Eyebrow>Premium Quality</Eyebrow>
-            <h1 className="mt-4 md:mt-5 text-4xl md:text-7xl font-bold leading-[0.95] tracking-tight text-navy">
+            {/* written out rather than using <Eyebrow> so the phone size can be
+                dialled down — the shared component hard-codes text-[11px], and
+                a second font-size class beside it resolves unpredictably */}
+            <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-brand-cyan-deep sm:text-[11px] sm:tracking-[0.28em]">
+              Premium Quality
+            </p>
+            <h1 className="mt-3 text-[26px] font-bold leading-[1.05] tracking-tight text-navy sm:mt-4 sm:text-4xl sm:leading-[0.95] md:mt-5 md:text-7xl">
               RESEARCH GRADE PEPTIDES
             </h1>
-            {/* the old max-w-60 kept the copy clear of the vial when it sat on
-                top of the photo; stacked on mobile it just forced ragged wraps */}
-            <p className="mt-4 md:mt-6 md:max-w-md text-[15px] md:text-base leading-relaxed text-body">
+            {/* held to ~72% of a phone's width so the copy stays on the bright
+                left side of the artwork rather than running across the vial */}
+            <p className="mt-3 max-w-68 text-[13px] leading-relaxed text-body sm:mt-4 sm:max-w-sm sm:text-[15px] md:mt-6 md:max-w-md md:text-base">
               Precision-made peptides designed to support research with dependable
               quality and consistency.
             </p>
 
-            <div className="mt-7 md:mt-9 flex flex-col items-stretch gap-3 sm:flex-row sm:items-start sm:gap-4">
+            {/* items-start, not items-stretch: stretched inside the 17rem
+                column the pills were 272px wide and ran under the vial. Sized
+                to their own labels they come in around 150px. */}
+            <div className="mt-6 flex flex-col items-start gap-2.5 sm:mt-7 sm:flex-row sm:gap-4 md:mt-9">
               <a
                 href="#catalog"
-                className="inline-flex min-h-12 items-center justify-center rounded-full bg-navy px-7 text-sm font-semibold text-white shadow-lg shadow-navy/15 hover:bg-navy-600 transition-colors"
+                className="inline-flex min-h-11 items-center justify-center rounded-full bg-navy px-6 text-[13px] font-semibold text-white shadow-lg shadow-navy/15 transition-colors hover:bg-navy-600 sm:min-h-12 sm:px-7 sm:text-sm"
               >
                 Browse products
               </a>
               <a
                 href="#process"
-                className="inline-flex min-h-12 items-center justify-center rounded-full border border-line bg-white/70 px-7 text-sm font-semibold text-navy backdrop-blur-sm hover:border-brand-cyan hover:text-brand-cyan-deep transition-colors"
+                className="inline-flex min-h-11 items-center justify-center rounded-full border border-line bg-white/70 px-6 text-[13px] font-semibold text-navy backdrop-blur-sm transition-colors hover:border-brand-cyan hover:text-brand-cyan-deep sm:min-h-12 sm:px-7 sm:text-sm"
               >
                 Learn our process
               </a>
             </div>
 
-            {/* carton badge row — two columns on a phone rather than hidden */}
-            <ul className="mt-8 grid grid-cols-2 gap-x-4 gap-y-3 sm:mt-10 sm:flex sm:flex-wrap sm:gap-x-6 sm:gap-y-3">
+            {/* Back on phones, but stacked in a single ~184px column instead of
+                two: the vial's left edge sits about 207px in, so a two-column
+                row put the right-hand badges on top of it. */}
+            <ul className="mt-7 grid max-w-46 grid-cols-1 gap-2.5 sm:mt-10 sm:flex sm:max-w-none sm:flex-wrap sm:gap-x-6 sm:gap-y-3">
               {HERO_BADGES.map(([icon, label]) => (
                 <li
                   key={label}
-                  className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-body-soft"
+                  className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-body-soft sm:text-[11px] sm:tracking-[0.14em]"
                 >
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full border border-line bg-white/80 text-brand-cyan">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-line bg-white/80 text-brand-cyan sm:h-7 sm:w-7">
                     {icon}
                   </span>
                   {label}
