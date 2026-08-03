@@ -4,15 +4,20 @@ import { motion } from "framer-motion";
 import { ArrowRight, Search } from "lucide-react";
 import HelixWave from "../components/HelixWave";
 import Footer from "../components/Footer";
-import { getSinglePrice, PENS, VIALS } from "../data/productData";
+import { getSinglePrice, VIALS } from "../data/productData";
+// Pens are shelved for now — restore alongside the vials/pens tabs below:
+// import { PENS } from "../data/productData";
 
 export default function Products() {
-  const [tab, setTab] = useState("vials");
+  // Vials only while pens are shelved; `tab` returns with the selector below.
+  // const [tab, setTab] = useState("vials");
   // const [tier, setTier] = useState(0);
   const [query, setQuery] = useState("");
 
-  const source = tab === "vials" ? VIALS : PENS;
-  const unit = tab === "vials" ? "vial" : "pen";
+  const tab = "vials";
+  const source = VIALS;
+  // const source = tab === "vials" ? VIALS : PENS;
+  const unit = "vial";
   const list = source.filter((product) =>
     `${product.name} ${product.spec}`
       .toLowerCase()
@@ -53,6 +58,11 @@ export default function Products() {
       </section>
       <div className="sticky top-14 z-30 border-y border-line bg-white/90 backdrop-blur md:top-16">
         <div className="mx-auto grid max-w-7xl grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-2.5 px-4 py-3 sm:px-6 md:flex md:flex-wrap md:gap-4 md:px-10 md:py-4">
+          {/* ── Vials / Pens tabs ──────────────────────────────────────────
+              Pens are shelved for now, so the selector is disabled and the page
+              is vials-only. To restore: uncomment this block, the `tab` state
+              and PENS import above, and delete the fixed tab/source/unit consts.
+
           <div className="flex shrink-0 rounded-full border border-line bg-ice-100 p-1 text-[13px] md:order-1">
             {["vials", "pens"].map((type) => (
               <button
@@ -69,6 +79,7 @@ export default function Products() {
               </button>
             ))}
           </div>
+          ──────────────────────────────────────────────────────────────── */}
 
           <label className="flex min-w-0 items-center gap-2 rounded-full border border-line bg-ice-100 px-4 py-2 transition-colors focus-within:border-brand-cyan focus-within:bg-white md:order-3 md:ml-auto">
             <Search size={14} className="shrink-0 text-brand-cyan-deep" />

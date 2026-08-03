@@ -13,6 +13,7 @@ import {
   Microscope,
   PackageCheck,
   ShieldCheck,
+  ShoppingBag,
 } from "lucide-react";
 import Footer from "../components/Footer";
 import {
@@ -225,11 +226,8 @@ export default function ProductDetails() {
                   to="/contact"
                   className="group inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-navy px-6 text-sm font-semibold text-white shadow-[0_14px_34px_-16px_rgba(22,48,92,0.65)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-navy-600"
                 >
-                  Request product information
-                  <ArrowRight
-                    size={16}
-                    className="transition-transform duration-300 group-hover:translate-x-0.5"
-                  />
+                  <ShoppingBag size={16} />
+                  Buy now
                 </Link>
 
                 <Link

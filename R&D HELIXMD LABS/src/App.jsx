@@ -15,6 +15,7 @@ import Contact from "./pages/Contact";
 import Products from "./pages/Products";
 import ProductDetails from "./pages/ProductDetails";
 import Legal from "./pages/Legal";
+import COA from "./pages/COA";
 
 // Reset scroll to the top when navigating between pages (hash links handle themselves).
 function ScrollToTop() {
@@ -62,6 +63,7 @@ function App() {
             <Route path="/products" element={<Products />} />
             {/* :productSlug matches the param ProductDetails reads via useParams */}
             <Route path="/products/:productSlug" element={<ProductDetails />} />
+            <Route path="/coa" element={<COA />} />
             <Route path="/legal" element={<Legal />} />
           </Routes>
         </BrowserRouter>

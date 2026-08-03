@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Search,
@@ -192,12 +193,12 @@ export default function Home() {
                 column the pills were 272px wide and ran under the vial. Sized
                 to their own labels they come in around 150px. */}
             <div className="mt-6 flex flex-col items-start gap-2.5 sm:mt-7 sm:flex-row sm:gap-4 md:mt-9">
-              <a
-                href="#catalog"
+              <Link
+                to="/products"
                 className="inline-flex min-h-11 items-center justify-center rounded-full bg-navy px-6 text-[13px] font-semibold text-white shadow-lg shadow-navy/15 transition-colors hover:bg-navy-600 sm:min-h-12 sm:px-7 sm:text-sm"
               >
                 Browse products
-              </a>
+              </Link>
               <a
                 href="#process"
                 className="inline-flex min-h-11 items-center justify-center rounded-full border border-line bg-white/70 px-6 text-[13px] font-semibold text-navy backdrop-blur-sm transition-colors hover:border-brand-cyan hover:text-brand-cyan-deep sm:min-h-12 sm:px-7 sm:text-sm"
@@ -206,19 +207,21 @@ export default function Home() {
               </a>
             </div>
 
-            {/* Back on phones, but stacked in a single ~184px column instead of
-                two: the vial's left edge sits about 207px in, so a two-column
-                row put the right-hand badges on top of it. */}
-            <ul className="mt-7 grid max-w-46 grid-cols-1 gap-2.5 sm:mt-10 sm:flex sm:max-w-none sm:flex-wrap sm:gap-x-6 sm:gap-y-3">
+            {/* A grid rather than flex-wrap so all four sit on an even 2x2:
+                wrapping laid them out by label length, which left ragged rows
+                and no shared left edge between the two columns.
+                items-start keeps the icon aligned to the first line when a
+                label wraps, so every row starts at the same height. */}
+            <ul className="mt-7 grid max-w-46 grid-cols-1 gap-x-5 gap-y-3 sm:mt-10 sm:max-w-lg sm:grid-cols-2">
               {HERO_BADGES.map(([icon, label]) => (
                 <li
                   key={label}
-                  className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-body-soft sm:text-[11px] sm:tracking-[0.14em]"
+                  className="flex items-start gap-2 text-[10px] font-semibold uppercase leading-tight tracking-[0.12em] text-body-soft sm:text-[11px] sm:tracking-[0.14em]"
                 >
                   <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-line bg-white/80 text-brand-cyan sm:h-7 sm:w-7">
                     {icon}
                   </span>
-                  {label}
+                  <span className="pt-1.5 sm:pt-2">{label}</span>
                 </li>
               ))}
             </ul>
@@ -508,12 +511,12 @@ export default function Home() {
               Every product is accompanied by detailed documentation, allowing researchers
               to review testing data and batch information with confidence.
             </p>
-            <a
-              href="#faq"
+            <Link
+              to="/coa"
               className="mt-8 inline-flex items-center gap-2 rounded-full border border-line bg-white px-6 py-3 text-sm font-semibold text-navy hover:border-brand-cyan hover:text-brand-cyan-deep transition-colors"
             >
               View documentation <ArrowRight size={15} />
-            </a>
+            </Link>
           </div>
 
           {/* COA card */}
@@ -604,12 +607,12 @@ export default function Home() {
               Every peptide in our catalog is manufactured to consistent specifications,
               independently tested, and shipped with a batch-specific COA.
             </p>
-            <a
-              href="#catalog"
+            <Link
+              to="/products"
               className="mt-9 inline-flex items-center gap-2 rounded-full bg-navy px-8 py-4 text-sm font-semibold text-white shadow-lg shadow-navy/20 hover:bg-navy-600 transition-colors"
             >
               Browse products <ArrowRight size={16} />
-            </a>
+            </Link>
           </div>
         </div>
       </Section>

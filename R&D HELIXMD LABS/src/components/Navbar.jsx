@@ -6,6 +6,7 @@ import { useLenis } from "lenis/react";
 const LINKS = [
   { label: "Home", to: "/" },
   { label: "About", to: "/about" },
+  { label: "COA", to: "/coa" },
   { label: "Contact", to: "/contact" },
 ];
 
