@@ -16,14 +16,17 @@ import HelixWave from "../components/HelixWave";
 import Footer from "../components/Footer";
 import { VIALS } from "../data/productData";
 import { SUPPORT_EMAIL } from "../data/legalContent";
-import { coaHref, SAMPLE_COA_HREF } from "../data/coaLibrary";
+import { coaHref, SAMPLE_COA_HREF, withCoa } from "../data/coaLibrary";
 
+/* Read off the Semax 10 mg certificate (SAMPLE_COA_SLUG) — keep the two in
+   step, this panel is meant to quote a document a visitor can open. */
 const SAMPLE_COA = [
-  ["Lot", "HRL-2617"],
-  ["Identity", "Confirmed"],
-  ["Method", "HPLC / MS"],
-  ["Appearance", "Lyophilized solid"],
-  ["Intended Use", "Laboratory research"],
+  ["Product", "Semax 10 mg"],
+  ["Lot", "10B"],
+  ["Identity (LC-MS)", "Confirmed"],
+  ["Purity (HPLC-UV)", "99.20 %"],
+  ["Net content", "10.02 mg"],
+  ["Appearance", "White lyophilized powder"],
 ];
 
 const WHAT_IS_TESTED = [
@@ -55,11 +58,16 @@ export default function COA() {
     else target.scrollIntoView({ behavior: "smooth" });
   };
 
+  // Only products with a document on file — the rest would be dead links.
+  const documented = useMemo(() => withCoa(VIALS), []);
+
   const list = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return VIALS;
-    return VIALS.filter((p) => `${p.name} ${p.spec}`.toLowerCase().includes(q));
-  }, [query]);
+    if (!q) return documented;
+    return documented.filter((p) =>
+      `${p.name} ${p.spec}`.toLowerCase().includes(q),
+    );
+  }, [documented, query]);
 
   return (
     <div className="min-h-screen bg-white">
@@ -89,8 +97,9 @@ export default function COA() {
             Certificates of Analysis
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-sm leading-relaxed text-body md:text-base">
-            Every batch is released with analytical documentation. Open the COA
-            for any product in the catalog below.
+            Third-party analysis, published as issued by the testing lab. Open
+            any document below — for a product that isn’t listed yet, send us
+            the lot number and we’ll return its certificate.
           </p>
 
           {/* Lenis owns the scroll, and a bare #hash href fights it — so jump
@@ -185,7 +194,7 @@ export default function COA() {
               ))}
             </dl>
             <p className="mt-4 rounded-lg bg-ice-100 px-3 py-2 text-[11px] leading-relaxed text-body-soft">
-              Specimen record shown for illustration. Figures on your COA reflect
+              Read from the Semax 10 mg certificate. Figures on your COA reflect
               the batch you received.
             </p>
           </div>
@@ -206,15 +215,19 @@ export default function COA() {
               </p>
             </div>
 
-            <label className="flex min-w-0 flex-1 items-center gap-2 rounded-full border border-line bg-white px-4 py-2 transition-colors focus-within:border-brand-cyan sm:max-w-xs">
-              <Search size={14} className="shrink-0 text-brand-cyan-deep" />
-              <input
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search products"
-                className="w-full min-w-0 bg-transparent text-sm text-navy outline-none placeholder:text-body-soft/70"
-              />
-            </label>
+            {/* A search box over a list this short is just chrome — it earns
+                its place once the library outgrows a glance. */}
+            {documented.length > 12 && (
+              <label className="flex min-w-0 flex-1 items-center gap-2 rounded-full border border-line bg-white px-4 py-2 transition-colors focus-within:border-brand-cyan sm:max-w-xs">
+                <Search size={14} className="shrink-0 text-brand-cyan-deep" />
+                <input
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  placeholder="Search products"
+                  className="w-full min-w-0 bg-transparent text-sm text-navy outline-none placeholder:text-body-soft/70"
+                />
+              </label>
+            )}
           </div>
 
           {/* Whole card is the link — the PDF is the only thing anyone comes
@@ -263,6 +276,18 @@ export default function COA() {
               </button>
             </div>
           )}
+
+          <p className="mt-6 text-[12px] leading-relaxed text-body-soft">
+            Working through the rest of the catalog. For a product not listed
+            here,{" "}
+            <a
+              href={`mailto:${SUPPORT_EMAIL}?subject=Certificate%20of%20Analysis%20request`}
+              className="font-semibold text-brand-cyan-deep transition-colors hover:text-navy"
+            >
+              ask us for the certificate
+            </a>{" "}
+            covering your lot.
+          </p>
         </div>
       </section>
 
