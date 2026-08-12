@@ -78,6 +78,7 @@ export default function Footer() {
         <FooterCol
           title="Support"
           links={[
+            { label: "Client registration", to: "/register" },
             { label: "Contact", to: "/contact" },
             { label: "Shipping", to: "/legal#shipping" },
             { label: "Terms", to: "/legal#terms" },

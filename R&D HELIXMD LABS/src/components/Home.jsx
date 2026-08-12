@@ -157,7 +157,7 @@ export default function Home() {
             Anchoring to the bottom takes it all off the empty top instead and
             keeps the vial and its reflection whole. */}
         <picture>
-          <source media="(min-width: 768px)" srcSet="/hero1.avif" />
+          <source media="(min-width: 768px)" srcSet="/newhero1.avif" />
           <img
             src="/mobile-hero.avif"
             alt="HelixMD Labs research-grade peptide vial"

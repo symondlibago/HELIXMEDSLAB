@@ -72,7 +72,9 @@ export default function Navbar() {
           </a>
 
           {/* ── desktop links ── */}
-          <div className="hidden md:flex items-center gap-9 text-[15px] font-medium">
+          {/* two CTAs alongside the links overflow a 768px bar at gap-9 — open
+              it back up once there's room */}
+          <div className="hidden md:flex items-center gap-5 lg:gap-9 text-[15px] font-medium">
             {LINKS.map(({ label, to }) => {
               const active = isActive(to);
               const inner = (
@@ -104,27 +106,37 @@ export default function Navbar() {
             })}
           </div>
 
-          {/* ── desktop CTA ── */}
-          <Link
-            to="/products"
-            className="group hidden md:inline-flex items-center gap-2 rounded-full bg-navy px-6 py-2.5 text-[14px] font-semibold text-white shadow-sm shadow-navy/20 transition-all duration-300 hover:bg-navy-600 hover:shadow-lg hover:shadow-navy/30"
-          >
-            Browse products
-            <svg
-              viewBox="0 0 16 16"
-              fill="none"
-              className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5"
-              aria-hidden="true"
+          {/* ── desktop CTAs ── */}
+          <div className="hidden md:flex items-center gap-2 lg:gap-3">
+            <Link
+              to="/register"
+              className="inline-flex items-center rounded-full border border-line bg-white px-4 py-2.5 text-[14px] font-semibold text-navy transition-colors duration-300 hover:border-brand-cyan hover:text-brand-cyan-deep lg:px-5"
             >
-              <path
-                d="M3 8h10m0 0-4-4m4 4-4 4"
-                stroke="currentColor"
-                strokeWidth="1.6"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </Link>
+              Register
+            </Link>
+
+            <Link
+              to="/products"
+              className="group inline-flex items-center gap-2 rounded-full bg-navy px-4 py-2.5 text-[14px] font-semibold text-white shadow-sm shadow-navy/20 transition-all duration-300 hover:bg-navy-600 hover:shadow-lg hover:shadow-navy/30 lg:px-6"
+            >
+              Browse products
+              {/* the arrow is the first thing to go when the bar gets tight */}
+              <svg
+                viewBox="0 0 16 16"
+                fill="none"
+                className="hidden h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 lg:block"
+                aria-hidden="true"
+              >
+                <path
+                  d="M3 8h10m0 0-4-4m4 4-4 4"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </Link>
+          </div>
 
           {/* ── burger ── */}
           <button
@@ -238,6 +250,13 @@ export default function Navbar() {
                         strokeLinejoin="round"
                       />
                     </svg>
+                  </Link>
+
+                  <Link
+                    to="/register"
+                    className="mt-3 flex items-center justify-center rounded-full border border-line bg-white px-6 py-3.5 text-[15px] font-semibold text-navy"
+                  >
+                    Register
                   </Link>
                 </motion.div>
               </div>
