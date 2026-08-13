@@ -14,16 +14,36 @@ import { REVIEW_WINDOW_HOURS } from "../data/registrationConfig";
 const SEEN_KEY = "helixmd.welcome.seen.v1";
 const OPEN_DELAY_MS = 700;
 
+const Strong = ({ children }) => (
+  <strong className="font-semibold text-navy">{children}</strong>
+);
+
 const STEPS = [
   {
-    title: "Step 1",
+    title: "Step 1:",
     lines: [
-      "Enter your email and the referral code you were given.",
-      "The code sets up your account and its pricing.",
+      <>Enter your email address and the referral code you were given.</>,
+      <>
+        Select <Strong>Next</Strong>.
+      </>,
     ],
   },
-  { title: "Step 2", lines: ["Add your contact and shipping details."] },
-  { title: "Step 3", lines: ["Confirm the terms and submit."] },
+  {
+    title: "Step 2:",
+    lines: [
+      <>
+        Complete the form and select <Strong>Next</Strong>.
+      </>,
+    ],
+  },
+  {
+    title: "Step 3:",
+    lines: [
+      <>
+        Complete the form and select <Strong>Submit</Strong>.
+      </>,
+    ],
+  },
 ];
 
 export default function WelcomeModal() {
@@ -113,11 +133,11 @@ export default function WelcomeModal() {
               id="welcome-title"
               className="mt-6 text-center text-xl font-bold tracking-tight text-navy sm:text-2xl"
             >
-              Welcome — let’s register your account
+              Welcome! Let’s register your account.
             </h2>
-            <p className="mx-auto mt-3 max-w-sm text-center text-[13px] leading-relaxed text-body">
+             <p className="mx-auto mt-3 max-w-sm text-center text-[13px] leading-relaxed text-body">
               HelixMD Labs supplies research-grade peptides to approved clients
-              only. The catalog and pricing open up once your account is set up.
+              only.
             </p>
 
             <ol className="mt-6 space-y-4 border-t border-line pt-6">
@@ -128,8 +148,12 @@ export default function WelcomeModal() {
                   </span>
                   <div className="min-w-0">
                     <p className="text-[13px] font-bold text-navy">{title}</p>
-                    {lines.map((line) => (
-                      <p key={line} className="text-[13px] leading-relaxed text-body">
+                    {lines.map((line, lineIndex) => (
+                      <p
+                        // Lines are fixed copy, so the index is a stable key.
+                        key={lineIndex}
+                        className="text-[13px] leading-relaxed text-body"
+                      >
                         {line}
                       </p>
                     ))}
@@ -142,7 +166,7 @@ export default function WelcomeModal() {
               <Clock size={15} className="mt-0.5 shrink-0 text-brand-cyan-deep" />
               <p className="text-[12px] leading-relaxed text-body">
                 Please allow up to {REVIEW_WINDOW_HOURS} hours for your account
-                to be reviewed and approved. Once approved, you’ll receive an
+                to be reviewed and approved. Upon approval, you will receive an
                 email with a link to create your password.
               </p>
             </div>

@@ -5,18 +5,14 @@ import { useLenis } from "lenis/react";
 import {
   ArrowLeft,
   ArrowRight,
-  Building2,
-  Check,
   CircleAlert,
   Loader2,
   MailCheck,
-  User,
 } from "lucide-react";
 import HelixWave from "../components/HelixWave";
 import SelectMenu from "../components/SelectMenu";
 import Footer from "../components/Footer";
 import {
-  ACCOUNT_TYPES,
   BUSINESS_TYPES,
   HEARD_FROM,
   lookupReferralCode,
@@ -237,7 +233,6 @@ export default function Register() {
   );
   const accountType = matchedCode?.accountType ?? "";
   const isWholesale = accountType === "wholesale";
-  const tier = ACCOUNT_TYPES.find((type) => type.slug === accountType);
 
   const set = (name, value) => {
     setValues((prev) => ({ ...prev, [name]: value }));
@@ -455,57 +450,6 @@ export default function Register() {
                           autoCapitalize="characters"
                           spellCheck="false"
                         />
-
-                        {/* Confirming the tier the moment the code lands means
-                            nobody discovers they're on the wrong pricing three
-                            steps later. */}
-                        <AnimatePresence initial={false}>
-                          {tier && (
-                            <motion.div
-                              key={tier.slug}
-                              initial={{ opacity: 0, height: 0 }}
-                              animate={{ opacity: 1, height: "auto" }}
-                              exit={{ opacity: 0, height: 0 }}
-                              transition={{ duration: 0.25, ease: "easeOut" }}
-                              className="overflow-hidden"
-                            >
-                              <div className="flex items-start gap-3 rounded-2xl border border-brand-cyan/40 bg-brand-cyan/5 p-4">
-                                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-cyan text-white">
-                                  {isWholesale ? (
-                                    <Building2 size={16} />
-                                  ) : (
-                                    <User size={16} />
-                                  )}
-                                </span>
-                                <div className="min-w-0">
-                                  <p className="text-sm font-bold text-navy">
-                                    {tier.label} account
-                                    <span className="ml-2 font-medium text-body-soft">
-                                      {tier.tagline}
-                                    </span>
-                                  </p>
-                                  <p className="mt-1 text-[13px] leading-relaxed text-body">
-                                    {tier.blurb}
-                                  </p>
-                                  <ul className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1.5">
-                                    {tier.points.map((point) => (
-                                      <li
-                                        key={point}
-                                        className="flex items-center gap-1.5 text-[12px] text-body"
-                                      >
-                                        <Check
-                                          size={12}
-                                          className="shrink-0 text-brand-teal"
-                                        />
-                                        {point}
-                                      </li>
-                                    ))}
-                                  </ul>
-                                </div>
-                              </div>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
 
                         <SelectField
                           id="heardFrom"
