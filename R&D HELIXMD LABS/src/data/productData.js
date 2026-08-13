@@ -1,14 +1,15 @@
-/* Bulk order tiers. Kept here on purpose: the R&D site sells singles only for
-   now, so the selectors that consume this are commented out in Products.jsx
-   and ProductDetails.jsx rather than deleted. Uncomment those to bring volume
-   pricing back — `prices` on every product is still the full 4-tier array. */
 export const TIERS = ["20", "50", "100", "200"];
 
-/* Single-unit pricing: 2.5 × the base (20+) tier price. */
 export const SINGLE_UNIT_MULTIPLIER = 2.5;
 
-export const getSinglePrice = (product) =>
-  product.prices[0] * SINGLE_UNIT_MULTIPLIER;
+export const PRICE_MULTIPLIERS = {
+  retail: SINGLE_UNIT_MULTIPLIER,
+  wholesale: 1.75,
+};
+
+/** Price for a given account type, defaulting to retail. */
+export const getPriceFor = (product, accountType) =>
+  product.prices[0] * (PRICE_MULTIPLIERS[accountType] ?? SINGLE_UNIT_MULTIPLIER);
 
 const PRODUCT_IMAGE_EXTENSION = "png";
 

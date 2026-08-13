@@ -16,11 +16,8 @@ import {
   ShoppingBag,
 } from "lucide-react";
 import Footer from "../components/Footer";
-import {
-  ALL_PRODUCTS,
-  getProductBySlug,
-  getSinglePrice,
-} from "../data/productData";
+import PriceTag from "../components/PriceTag";
+import { ALL_PRODUCTS, getProductBySlug } from "../data/productData";
 // Volume pricing is off for the R&D site — restore with the “Select order
 // volume” block below: add TIERS back to the import above.
 
@@ -88,8 +85,7 @@ export default function ProductDetails() {
     );
   }
 
-  const price = getSinglePrice(product);
-  // const price = product.prices[tier];
+  // Pricing is account-gated and drawn by <PriceTag>.
   // const saving = Math.round((1 - price / product.prices[0]) * 100);
 
   return (
@@ -185,9 +181,9 @@ export default function ProductDetails() {
                     <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-body-soft">
                       Price per single {product.unit}
                     </p>
-                    <p className="mt-1 text-3xl font-bold tracking-tight text-navy sm:text-4xl">
-                      ${price.toFixed(2)}
-                    </p>
+                    <div className="mt-1">
+                      <PriceTag product={product} size="lg" />
+                    </div>
                   </div>
 
                   {/* Tier discount badge — restore with volume pricing:

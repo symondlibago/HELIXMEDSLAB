@@ -20,11 +20,8 @@ import {
 } from "./ui/accordion";
 import HelixWave from "./HelixWave";
 import Footer from "./Footer";
-import {
-  createProductSlug,
-  getProductBySlug,
-  getSinglePrice,
-} from "../data/productData";
+import PriceTag from "./PriceTag";
+import { createProductSlug, getProductBySlug } from "../data/productData";
 
 const reveal = {
   hidden: { opacity: 0, y: 24 },
@@ -42,18 +39,15 @@ const PRODUCT_IMAGE_EXTENSION = "png";
 const productImage = (filename) =>
   `/product images/vial/${filename}.${PRODUCT_IMAGE_EXTENSION}`;
 
-/* Prices are read from the catalog rather than hard-coded, so the homepage
-   can't drift out of step with /products. (It already had: this listed
-   Retatrutide 20 mg at $52.50, which is the 10 mg base price.) */
-const featured = (name, spec, filename) => {
-  const product = getProductBySlug(createProductSlug(name, spec));
-  return {
-    name,
-    dose: spec,
-    price: product ? getSinglePrice(product).toFixed(2) : null,
-    image: productImage(filename),
-  };
-};
+/* The catalog product is carried through rather than a formatted price, so
+   the card can't drift out of step with /products and so <PriceTag> can pick
+   the figure for whichever tier the visitor's account is on. */
+const featured = (name, spec, filename) => ({
+  name,
+  dose: spec,
+  product: getProductBySlug(createProductSlug(name, spec)),
+  image: productImage(filename),
+});
 
 const PRODUCTS = [
   featured("Retatrutide", "20 mg", "RETA (20)"),
@@ -398,9 +392,9 @@ export default function Home() {
                 <h3 className="text-lg font-bold leading-tight tracking-tight text-navy sm:text-xl">
                   {p.name}
                 </h3>
-                <p className="mt-1.5 text-base font-bold text-brand-cyan-deep sm:text-lg">
-                  ${p.price}
-                </p>
+                <div className="mt-1.5">
+                  {p.product && <PriceTag product={p.product} size="sm" />}
+                </div>
 
                 <ul className="mt-4 space-y-1 text-[12px] leading-relaxed text-body sm:text-[13px]">
                   <li>• {p.dose} · Lyophilized</li>

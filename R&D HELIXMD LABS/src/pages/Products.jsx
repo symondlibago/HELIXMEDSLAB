@@ -4,7 +4,8 @@ import { motion } from "framer-motion";
 import { ArrowRight, Search } from "lucide-react";
 import HelixWave from "../components/HelixWave";
 import Footer from "../components/Footer";
-import { getSinglePrice, PENS, VIALS } from "../data/productData";
+import PriceTag from "../components/PriceTag";
+import { PENS, VIALS } from "../data/productData";
 
 export default function Products() {
   const [tab, setTab] = useState("vials");
@@ -120,9 +121,7 @@ export default function Products() {
         {/* two up on phones so the catalog stays short to scroll */}
         <div className="grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3">
           {list.map((product, index) => {
-            const price = getSinglePrice(product);
             // Volume pricing disabled — no tier discount to advertise.
-            // const price = product.prices[tier];
             // const saving = Math.round((1 - price / product.prices[0]) * 100);
 
             return (
@@ -177,12 +176,7 @@ export default function Products() {
                   </p>
 
                   <div className="mt-2 mb-3 flex flex-wrap items-baseline gap-x-1.5 gap-y-1 sm:mt-3">
-                    <p className="text-base font-bold text-navy sm:text-xl">
-                      ${price.toFixed(2)}
-                    </p>
-                    <span className="text-[10px] font-medium text-body-soft">
-                      / {unit}
-                    </span>
+                    <PriceTag product={product} unit={unit} size="sm" />
                     {/* Tier discount badge — restore with volume pricing:
                     {saving > 0 && (
                       <span className="ml-auto rounded-full bg-brand-teal/12 px-1.5 py-0.5 text-[10px] font-semibold text-brand-teal">

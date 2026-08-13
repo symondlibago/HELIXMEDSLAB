@@ -17,12 +17,20 @@ export const ACCOUNT_TYPES = [
   },
 ];
 
-export const REFERRAL_TEAMS = [
-  { id: "atlas", name: "Team Atlas", reps: ["A. Rivera", "M. Chen", "J. Okafor"] },
-  { id: "meridian", name: "Team Meridian", reps: ["S. Delacroix", "P. Nakamura"] },
-  { id: "vertex", name: "Team Vertex", reps: ["R. Alvarez", "T. Brennan", "K. Osei"] },
-  { id: "direct", name: "HelixMD Labs — direct", reps: [] },
+export const REFERRAL_CODES = [
+  { code: "RETAIL101", accountType: "retail", team: "HelixMD Labs — direct" },
+  { code: "WHOLESALE101", accountType: "wholesale", team: "HelixMD Labs — direct" },
+  { code: "ATLAS-RT", accountType: "retail", team: "Team Atlas" },
+  { code: "ATLAS-WS", accountType: "wholesale", team: "Team Atlas" },
+  { code: "MERIDIAN-WS", accountType: "wholesale", team: "Team Meridian" },
 ];
+
+/** Resolves a typed code to its entry, or null when it isn't recognised. */
+export const lookupReferralCode = (input) => {
+  const normalized = String(input || "").trim().toUpperCase();
+  if (!normalized) return null;
+  return REFERRAL_CODES.find((entry) => entry.code === normalized) || null;
+};
 
 export const HEARD_FROM = [
   "Referred by a colleague",

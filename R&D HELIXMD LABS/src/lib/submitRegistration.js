@@ -15,9 +15,10 @@ export function toCrmPayload(values) {
     postal_code: values.zip.trim(),
     country: values.country,
 
-    referral_team: values.referralTeam,
-    referral_rep: values.referralRep,
+    /* The code is what decided `account_type` above — sent so the CRM can
+       attribute the signup and verify the tier independently. */
     referral_code: values.referralCode.trim().toUpperCase(),
+    referral_team: values.team || "",
     heard_from: values.heardFrom,
 
     // Wholesale-only; empty strings on a retail submission.
@@ -27,9 +28,6 @@ export function toCrmPayload(values) {
     license_number: values.licenseNumber.trim(),
     monthly_volume: values.monthlyVolume,
     website: values.website.trim(),
-
-    // Retail-only.
-    research_use: values.researchUse.trim(),
 
     agreed_research_use: values.agreeResearch,
     agreed_of_age: values.agreeAge,

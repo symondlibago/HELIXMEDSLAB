@@ -19,25 +19,23 @@ import {
   ACCOUNT_TYPES,
   BUSINESS_TYPES,
   HEARD_FROM,
+  lookupReferralCode,
   MONTHLY_VOLUMES,
-  REFERRAL_TEAMS,
   REVIEW_WINDOW_HOURS,
   US_STATES,
 } from "../data/registrationConfig";
 import { submitRegistration } from "../lib/submitRegistration";
+import { useAccount } from "../context/AccountContext";
 
-const STEPS = ["Account type", "Your details", "Review & submit"];
+const STEPS = ["Get started", "Your details", "Review & submit"];
 
 const EMPTY = {
-  accountType: "",
-  referralTeam: "",
-  referralRep: "",
+  email: "",
   referralCode: "",
   heardFrom: "",
 
   firstName: "",
   lastName: "",
-  email: "",
   phone: "",
   address1: "",
   address2: "",
@@ -52,8 +50,6 @@ const EMPTY = {
   licenseNumber: "",
   monthlyVolume: "",
   website: "",
-
-  researchUse: "",
 
   agreeResearch: false,
   agreeAge: false,
@@ -70,14 +66,21 @@ function validateStep(step, v) {
   const e = {};
 
   if (step === 0) {
-    if (!v.accountType) e.accountType = "Choose the account you need";
+    if (!v.email.trim()) e.email = REQUIRED;
+    else if (!isEmail(v.email)) e.email = "Enter a valid email address";
+
+    // The code is what determines the account tier, so it can't be skipped.
+    if (!v.referralCode.trim()) e.referralCode = "Enter the code you were given";
+    else if (!lookupReferralCode(v.referralCode)) {
+      e.referralCode = "We don’t recognise that code — check it and try again";
+    }
+
+    if (!v.heardFrom) e.heardFrom = REQUIRED;
   }
 
   if (step === 1) {
     if (!v.firstName.trim()) e.firstName = REQUIRED;
     if (!v.lastName.trim()) e.lastName = REQUIRED;
-    if (!v.email.trim()) e.email = REQUIRED;
-    else if (!isEmail(v.email)) e.email = "Enter a valid email address";
     if (!v.phone.trim()) e.phone = REQUIRED;
     else if (digits(v.phone).length < 10) e.phone = "Enter a full phone number";
     if (!v.address1.trim()) e.address1 = REQUIRED;
@@ -88,13 +91,12 @@ function validateStep(step, v) {
   }
 
   if (step === 2) {
-    if (v.accountType === "wholesale") {
+    // Business details are only asked of wholesale accounts.
+    if (lookupReferralCode(v.referralCode)?.accountType === "wholesale") {
       if (!v.businessName.trim()) e.businessName = REQUIRED;
       if (!v.businessType) e.businessType = REQUIRED;
       if (!v.taxId.trim()) e.taxId = REQUIRED;
       if (!v.monthlyVolume) e.monthlyVolume = REQUIRED;
-    } else if (v.researchUse.trim().length < 15) {
-      e.researchUse = "Tell us a little about your intended use";
     }
 
     if (!v.agreeResearch) e.agreeResearch = "Please confirm this to continue";
@@ -220,6 +222,7 @@ function CheckRow({ id, checked, onChange, error, children }) {
 export default function Register() {
   const lenis = useLenis();
   const formTop = useRef(null);
+  const { register } = useAccount();
 
   const [step, setStep] = useState(0);
   const [values, setValues] = useState(EMPTY);
@@ -227,19 +230,17 @@ export default function Register() {
   const [status, setStatus] = useState("idle"); // idle | sending | done | error
   const [submitError, setSubmitError] = useState("");
 
-  const isWholesale = values.accountType === "wholesale";
-
-  const selectedTeam = useMemo(
-    () => REFERRAL_TEAMS.find((team) => team.name === values.referralTeam),
-    [values.referralTeam],
+  /* The code is the source of truth for the tier — nothing else sets it. */
+  const matchedCode = useMemo(
+    () => lookupReferralCode(values.referralCode),
+    [values.referralCode],
   );
+  const accountType = matchedCode?.accountType ?? "";
+  const isWholesale = accountType === "wholesale";
+  const tier = ACCOUNT_TYPES.find((type) => type.slug === accountType);
 
   const set = (name, value) => {
-    setValues((prev) => {
-      // Picking a different team invalidates whoever was chosen under the old one.
-      if (name === "referralTeam") return { ...prev, referralTeam: value, referralRep: "" };
-      return { ...prev, [name]: value };
-    });
+    setValues((prev) => ({ ...prev, [name]: value }));
     // Clear the error as soon as the field is touched — re-checked on Next.
     setErrors((prev) => (prev[name] ? { ...prev, [name]: undefined } : prev));
   };
@@ -282,7 +283,18 @@ export default function Register() {
     setStatus("sending");
     setSubmitError("");
     try {
-      await submitRegistration(values);
+      await submitRegistration({ ...values, accountType, team: matchedCode?.team });
+      // Opens the local session, which is what unlocks catalog pricing at the
+      // client's tier. See AccountContext for how this changes once approval
+      // status comes back from the CRM.
+      register({
+        email: values.email,
+        firstName: values.firstName,
+        lastName: values.lastName,
+        accountType,
+        referralCode: values.referralCode.trim().toUpperCase(),
+        team: matchedCode?.team,
+      });
       setStatus("done");
       scrollToForm();
     } catch (error) {
@@ -409,143 +421,113 @@ export default function Register() {
                   exit={{ opacity: 0, x: -16 }}
                   transition={{ duration: 0.28, ease: "easeOut" }}
                 >
-                  {/* ─────────── STEP 1 — account type + referral ─────────── */}
+                  {/* ─────────── STEP 1 — email + referral code ─────────── */}
                   {step === 0 && (
                     <div>
                       <h2 className="text-lg font-bold tracking-tight text-navy sm:text-xl">
-                        Which account do you need?
+                        Let’s get started
                       </h2>
                       <p className="mt-1.5 text-[13px] leading-relaxed text-body">
-                        This sets the pricing you’ll see once you’re approved.
-                        You can ask us to switch later.
+                        Your referral code sets up the account and the pricing
+                        that comes with it.
                       </p>
 
-                      <div className="mt-5 grid gap-3 sm:grid-cols-2 sm:gap-4">
-                        {ACCOUNT_TYPES.map((type) => {
-                          const active = values.accountType === type.slug;
-                          return (
-                            <button
-                              key={type.slug}
-                              type="button"
-                              onClick={() => set("accountType", type.slug)}
-                              aria-pressed={active}
-                              className={`flex h-full flex-col rounded-2xl border p-4 text-left transition-all duration-300 sm:p-5 ${
-                                active
-                                  ? "border-brand-cyan bg-brand-cyan/5 shadow-[0_18px_40px_-28px_rgba(23,168,224,0.8)]"
-                                  : "border-line bg-white hover:border-brand-cyan/50"
-                              }`}
+                      <div className="mt-5 grid gap-4">
+                        <Field
+                          id="email"
+                          label="Email"
+                          type="email"
+                          value={values.email}
+                          onChange={set}
+                          error={errors.email}
+                          placeholder="jane@lab.org"
+                          autoComplete="email"
+                        />
+
+                        <Field
+                          id="referralCode"
+                          label="Referral code"
+                          value={values.referralCode}
+                          onChange={set}
+                          error={errors.referralCode}
+                          placeholder="e.g. RETAIL101"
+                          autoComplete="off"
+                          autoCapitalize="characters"
+                          spellCheck="false"
+                        />
+
+                        {/* Confirming the tier the moment the code lands means
+                            nobody discovers they're on the wrong pricing three
+                            steps later. */}
+                        <AnimatePresence initial={false}>
+                          {tier && (
+                            <motion.div
+                              key={tier.slug}
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: "auto" }}
+                              exit={{ opacity: 0, height: 0 }}
+                              transition={{ duration: 0.25, ease: "easeOut" }}
+                              className="overflow-hidden"
                             >
-                              <span className="flex items-center gap-2.5">
-                                <span
-                                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg transition-colors ${
-                                    active
-                                      ? "bg-brand-cyan text-white"
-                                      : "bg-ice-200 text-brand-cyan-deep"
-                                  }`}
-                                >
-                                  {type.slug === "wholesale" ? (
+                              <div className="flex items-start gap-3 rounded-2xl border border-brand-cyan/40 bg-brand-cyan/5 p-4">
+                                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-cyan text-white">
+                                  {isWholesale ? (
                                     <Building2 size={16} />
                                   ) : (
                                     <User size={16} />
                                   )}
                                 </span>
-                                <span className="min-w-0">
-                                  <span className="block text-sm font-bold text-navy">
-                                    {type.label}
-                                  </span>
-                                  <span className="block text-[11px] text-body-soft">
-                                    {type.tagline}
-                                  </span>
-                                </span>
-                              </span>
-
-                              <span className="mt-3 block text-[13px] leading-relaxed text-body">
-                                {type.blurb}
-                              </span>
-
-                              <ul className="mt-3 space-y-1.5">
-                                {type.points.map((point) => (
-                                  <li
-                                    key={point}
-                                    className="flex items-start gap-2 text-[12px] text-body"
-                                  >
-                                    <Check
-                                      size={13}
-                                      className="mt-0.5 shrink-0 text-brand-teal"
-                                    />
-                                    {point}
-                                  </li>
-                                ))}
-                              </ul>
-                            </button>
-                          );
-                        })}
-                      </div>
-
-                      {errors.accountType && (
-                        <p className="mt-3 flex items-center gap-1.5 text-[12px] font-medium text-red-600">
-                          <CircleAlert size={13} className="shrink-0" />
-                          {errors.accountType}
-                        </p>
-                      )}
-
-                      <div className="mt-8 border-t border-line pt-7">
-                        <h3 className="text-sm font-bold text-navy">
-                          Were you referred to us?
-                        </h3>
-                        <p className="mt-1.5 text-[13px] leading-relaxed text-body">
-                          Optional — it just makes sure your account lands with
-                          the right person.
-                        </p>
-
-                        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                          {REFERRAL_TEAMS.length > 0 && (
-                            <>
-                              <SelectField
-                                id="referralTeam"
-                                label="Referring team"
-                                value={values.referralTeam}
-                                onChange={set}
-                                options={REFERRAL_TEAMS.map((team) => team.name)}
-                                placeholder="Not referred / none"
-                                /* clearing this is a real answer, not just a
-                                   prompt — so it gets its own row */
-                                emptyLabel="Not referred / none"
-                              />
-                              {/* only worth asking once a team with a roster is picked */}
-                              {selectedTeam?.reps?.length > 0 && (
-                                <SelectField
-                                  id="referralRep"
-                                  label="Who referred you?"
-                                  value={values.referralRep}
-                                  onChange={set}
-                                  options={selectedTeam.reps}
-                                  placeholder="Select a name"
-                                />
-                              )}
-                            </>
+                                <div className="min-w-0">
+                                  <p className="text-sm font-bold text-navy">
+                                    {tier.label} account
+                                    <span className="ml-2 font-medium text-body-soft">
+                                      {tier.tagline}
+                                    </span>
+                                  </p>
+                                  <p className="mt-1 text-[13px] leading-relaxed text-body">
+                                    {tier.blurb}
+                                  </p>
+                                  <ul className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1.5">
+                                    {tier.points.map((point) => (
+                                      <li
+                                        key={point}
+                                        className="flex items-center gap-1.5 text-[12px] text-body"
+                                      >
+                                        <Check
+                                          size={12}
+                                          className="shrink-0 text-brand-teal"
+                                        />
+                                        {point}
+                                      </li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              </div>
+                            </motion.div>
                           )}
+                        </AnimatePresence>
 
-                          <Field
-                            id="referralCode"
-                            label="Referral code"
-                            hint="if you have one"
-                            value={values.referralCode}
-                            onChange={set}
-                            placeholder="e.g. HELIX-1234"
-                            autoComplete="off"
-                          />
-
-                          <SelectField
-                            id="heardFrom"
-                            label="How did you hear about us?"
-                            value={values.heardFrom}
-                            onChange={set}
-                            options={HEARD_FROM}
-                            placeholder="Select an option"
-                          />
-                        </div>
+                        <SelectField
+                          id="heardFrom"
+                          label="How did you hear about us?"
+                          value={values.heardFrom}
+                          onChange={set}
+                          error={errors.heardFrom}
+                          options={HEARD_FROM}
+                          placeholder="Select an option"
+                        />
                       </div>
+
+                      <p className="mt-5 text-[12px] leading-relaxed text-body-soft">
+                        No code yet?{" "}
+                        <Link
+                          to="/contact"
+                          className="font-semibold text-brand-cyan-deep transition-colors hover:text-navy"
+                        >
+                          Ask our team for one
+                        </Link>{" "}
+                        and we’ll get you set up.
+                      </p>
                     </div>
                   )}
 
@@ -578,16 +560,6 @@ export default function Register() {
                           error={errors.lastName}
                           placeholder="Doe"
                           autoComplete="family-name"
-                        />
-                        <Field
-                          id="email"
-                          label="Email"
-                          type="email"
-                          value={values.email}
-                          onChange={set}
-                          error={errors.email}
-                          placeholder="jane@lab.org"
-                          autoComplete="email"
                         />
                         <Field
                           id="phone"
@@ -668,15 +640,15 @@ export default function Register() {
                   {step === 2 && (
                     <div>
                       <h2 className="text-lg font-bold tracking-tight text-navy sm:text-xl">
-                        {isWholesale ? "About your business" : "About your research"}
+                        {isWholesale ? "About your business" : "Almost done"}
                       </h2>
                       <p className="mt-1.5 text-[13px] leading-relaxed text-body">
                         {isWholesale
                           ? "Wholesale accounts are verified before approval, so these details keep the review moving."
-                          : "A short note on what you’ll be using the material for is all we need."}
+                          : "Just confirm the following and your registration is on its way."}
                       </p>
 
-                      {isWholesale ? (
+                      {isWholesale && (
                         <div className="mt-5 grid gap-4 sm:grid-cols-2">
                           <div className="sm:col-span-2">
                             <Field
@@ -734,32 +706,6 @@ export default function Register() {
                               autoComplete="url"
                             />
                           </div>
-                        </div>
-                      ) : (
-                        <div className="mt-5">
-                          <FieldShell
-                            id="researchUse"
-                            label="Intended research use"
-                            error={errors.researchUse}
-                          >
-                            <textarea
-                              id="researchUse"
-                              name="researchUse"
-                              rows={5}
-                              value={values.researchUse}
-                              onChange={(event) => set("researchUse", event.target.value)}
-                              aria-invalid={Boolean(errors.researchUse)}
-                              aria-describedby={
-                                errors.researchUse ? "researchUse-error" : undefined
-                              }
-                              placeholder="e.g. in-vitro assay development for a university lab"
-                              className={`${CONTROL} resize-none ${
-                                errors.researchUse
-                                  ? "border-red-400 focus:border-red-500"
-                                  : "border-line focus:border-brand-cyan"
-                              }`}
-                            />
-                          </FieldShell>
                         </div>
                       )}
 
