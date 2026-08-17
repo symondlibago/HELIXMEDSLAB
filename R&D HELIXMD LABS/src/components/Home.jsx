@@ -35,24 +35,18 @@ const FEATURES = [
   ["Fast & Secure Shipping", "Carefully packaged and shipped with reliability in mind."],
 ];
 
-const PRODUCT_IMAGE_EXTENSION = "png";
-const productImage = (filename) =>
-  `/product images/vial/${filename}.${PRODUCT_IMAGE_EXTENSION}`;
-
-/* The catalog product is carried through rather than a formatted price, so
-   the card can't drift out of step with /products and so <PriceTag> can pick
-   the figure for whichever tier the visitor's account is on. */
-const featured = (name, spec, filename) => ({
-  name,
-  dose: spec,
-  product: getProductBySlug(createProductSlug(name, spec)),
-  image: productImage(filename),
-});
+/* The catalog product is carried through rather than a formatted price and a
+   hand-built image path, so the card can't drift out of step with /products —
+   and <PriceTag> can pick the figure for whichever tier the account is on. */
+const featured = (name, spec) => {
+  const product = getProductBySlug(createProductSlug(name, spec));
+  return { name, dose: spec, product, image: product?.image };
+};
 
 const PRODUCTS = [
-  featured("Retatrutide", "20 mg", "RETA (20)"),
-  featured("Semaglutide", "20 mg", "SEMA (20)"),
-  featured("NAD+", "1000 mg", "NAD+ (1000)"),
+  featured("Retatrutide", "20 mg"),
+  featured("Semaglutide", "20 mg"),
+  featured("NAD+", "1000 mg"),
 ];
 
 const PURITY_FEATURES = [

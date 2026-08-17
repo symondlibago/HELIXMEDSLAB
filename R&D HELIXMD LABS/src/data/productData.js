@@ -11,7 +11,9 @@ export const PRICE_MULTIPLIERS = {
 export const getPriceFor = (product, accountType) =>
   product.prices[0] * (PRICE_MULTIPLIERS[accountType] ?? SINGLE_UNIT_MULTIPLIER);
 
-const PRODUCT_IMAGE_EXTENSION = "png";
+/* Renders are AVIF with the alpha channel intact — see
+   scripts/convert-product-images.mjs. PNG masters live in /originals. */
+const PRODUCT_IMAGE_EXTENSION = "avif";
 
 const productImage = (folder, filename) =>
   `/product images/${folder}/${filename}.${PRODUCT_IMAGE_EXTENSION}`;
